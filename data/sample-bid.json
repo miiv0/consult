@@ -1,0 +1,27 @@
+{
+  "bid": {
+    "id": "bid-001",
+    "name": "Acme Bank — Mobile App Rebuild",
+    "target_price": 1000000,
+    "target_margin": 0.35
+  },
+
+  "pods": [
+    { "id": "pod-ny",  "name": "New York Delivery",  "cost_rate": 180, "bill_rate": 400 },
+    { "id": "pod-dal", "name": "Dallas Delivery",    "cost_rate": 90,  "bill_rate": 220 },
+    { "id": "pod-off", "name": "Offshore Delivery",  "cost_rate": 30,  "bill_rate": 90  }
+  ],
+
+  "capabilities": [
+    { "id": "cap-login",   "name": "Login & Authentication" },
+    { "id": "cap-payments","name": "Payments" },
+    { "id": "cap-migrate", "name": "Data Migration" }
+  ],
+
+  "allocations": [
+    { "id": "a1", "capability_id": "cap-login",    "pod_id": "pod-ny",  "hours": 400 },
+    { "id": "a2", "capability_id": "cap-payments", "pod_id": "pod-dal", "hours": 900 },
+    { "id": "a3", "capability_id": "cap-payments", "pod_id": "pod-off", "hours": 600 },
+    { "id": "a4", "capability_id": "cap-migrate",  "pod_id": "pod-off", "hours": 500 }
+  ]
+}

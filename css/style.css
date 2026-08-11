@@ -1,0 +1,23 @@
+/* --- Basic reset so browsers start from the same place --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1a1a2e;
+  background: #f4f5f7;
+  line-height: 1.5;
+  padding: 2rem;
+}
+
+header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e0e0e6;
+  padding-bottom: 1rem;
+}
+
+h1 { font-size: 1.6rem; }
+.subtitle { color: #6b6b7b; font-size: 0.95rem; }
+
+main { max-width: 800px; }
+
+.loading { color: #6b6b7b; font-style: italic; }

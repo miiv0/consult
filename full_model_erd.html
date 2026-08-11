@@ -1,0 +1,113 @@
+<h2 class="sr-only">Complete entity relationship diagram of the pursuit modeling platform: 25 tables spanning tenancy, rate cards, pods and resources, effort estimation, the allocation grain, simulation, parametric reference data, and differential privacy</h2>
+<style>
+#erdfull svg.erDiagram .divider path { stroke-opacity: 0.5; }
+#erdfull svg.erDiagram .row-rect-odd path,
+#erdfull svg.erDiagram .row-rect-odd rect,
+#erdfull svg.erDiagram .row-rect-even path,
+#erdfull svg.erDiagram .row-rect-even rect { stroke: none !important; }
+</style>
+<div id="erdfull"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '12px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+  },
+});
+const { svg } = await mermaid.render('erd-svg-full', `erDiagram
+  TENANTS ||--o{ ROLE_AREAS : configures
+  TENANTS ||--o{ LOCATION_BUCKETS : configures
+  TENANTS ||--o{ PODS : owns
+  TENANTS ||--o{ RESOURCES : owns
+  TENANTS ||--o{ RATE_CARDS : owns
+  TENANTS ||--o{ BIDS : owns
+  TENANTS ||--o{ PRIVACY_BUDGETS : spends
+  TENANTS ||--o{ BENCHMARK_QUERY_LOG : queries
+  CANONICAL_CONCEPTS }o--o{ ROLE_AREAS : "mapped by"
+  CANONICAL_CONCEPTS ||--o{ PRIVACY_BUDGETS : "budgeted for"
+  CANONICAL_CONCEPTS ||--o{ BENCHMARK_QUERY_LOG : "queried on"
+  RATE_CARDS ||--o{ RATE_CARD_ENTRIES : contains
+  RATE_CARDS ||--o{ BIDS : "frozen for"
+  PODS ||--o{ POD_PARAMETERS : has
+  PODS ||--o{ POD_ROLES : has
+  POD_ROLES }o--|| ROLE_AREAS : tagged
+  POD_ROLES }o--|| LOCATION_BUCKETS : tagged
+  PODS ||--o{ ALLOCATIONS : receives
+  RESOURCES }o--|| ROLE_AREAS : tagged
+  RESOURCES ||--o{ ALLOCATIONS : receives
+  BIDS ||--o{ CAPABILITIES : contains
+  BIDS ||--o{ ALLOCATIONS : contains
+  BIDS ||--o{ BID_SNAPSHOTS : snapshots
+  BIDS ||--o{ FLAGS : raises
+  BIDS ||--o{ LEDGER_EVENTS : logs
+  BIDS ||--o{ SIMULATION_RUNS : simulates
+  CAPABILITIES ||--o{ EFFORT_ESTIMATES : "estimated by"
+  CAPABILITIES ||--o{ ALLOCATIONS : "split into"
+  CAPABILITIES ||--o{ CAPABILITY_PARAMETRIC_INPUTS : sized_by
+  ALLOCATIONS ||--o{ ALLOCATIONS : "carved from"
+  SIMULATION_RUNS ||--o{ SIMULATION_RESULTS : produces
+  PARAMETRIC_MODELS ||--o{ PARAMETRIC_MODEL_PARAMS : calibrates
+  PARAMETRIC_MODELS ||--o{ COST_DRIVER_DEFINITIONS : defines
+  PARAMETRIC_MODEL_PARAMS ||--o{ CAPABILITY_PARAMETRIC_INPUTS : used_in
+
+  TENANTS { uuid id PK }
+  CANONICAL_CONCEPTS { uuid id PK text name }
+  ROLE_AREAS { uuid id PK uuid tenant_id FK }
+  LOCATION_BUCKETS { uuid id PK uuid tenant_id FK }
+  RATE_CARDS { uuid id PK uuid tenant_id FK }
+  RATE_CARD_ENTRIES { uuid id PK text rate_key }
+  PODS { uuid id PK text name }
+  POD_PARAMETERS { uuid id PK }
+  POD_ROLES { uuid id PK text role_name }
+  RESOURCES { uuid id PK text name }
+  BIDS { uuid id PK text status }
+  CAPABILITIES { uuid id PK text name }
+  EFFORT_ESTIMATES { uuid id PK text method }
+  ALLOCATIONS { uuid id PK text kind }
+  BID_SNAPSHOTS { uuid id PK }
+  FLAGS { uuid id PK text severity }
+  LEDGER_EVENTS { uuid id PK }
+  SIMULATION_RUNS { uuid id PK }
+  SIMULATION_RESULTS { uuid id PK }
+  PRIVACY_BUDGETS { uuid id PK }
+  BENCHMARK_QUERY_LOG { uuid id PK }
+  PARAMETRIC_MODELS { uuid id PK text name }
+  PARAMETRIC_MODEL_PARAMS { uuid id PK }
+  COST_DRIVER_DEFINITIONS { uuid id PK text driver_code }
+  CAPABILITY_PARAMETRIC_INPUTS { uuid id PK }
+`);
+document.getElementById('erdfull').innerHTML = svg;
+
+document.querySelectorAll('#erdfull svg.erDiagram .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erdfull svg.erDiagram .row-rect-odd path, #erdfull svg.erDiagram .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>
