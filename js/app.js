@@ -16,11 +16,8 @@ fetch("data/sample-bid.json")
     let totalPrice = 0;
 
     for (const item of data.allocations) {
+      const pod = data.pods.find((p) => p.id === item.pod_id);
       totalHours += item.hours;
-    }
-
-    for (const item of data.allocations) {
-      const pod = data.pods.find((p) => p.id === item.pod_id); // find THIS item's pod
       totalCost += item.hours * pod.cost_rate;
       totalPrice += item.hours * pod.bill_rate;
     }

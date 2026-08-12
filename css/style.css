@@ -1,5 +1,8 @@
-/* --- Basic reset so browsers start from the same place --- */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
@@ -15,9 +18,20 @@ header {
   padding-bottom: 1rem;
 }
 
-h1 { font-size: 1.6rem; }
-.subtitle { color: #6b6b7b; font-size: 0.95rem; }
+h1 {
+  font-size: 1.6rem;
+}
 
-main { max-width: 800px; }
+.subtitle {
+  color: #6b6b7b;
+  font-size: 0.95rem;
+}
 
-.loading { color: #6b6b7b; font-style: italic; }
+main {
+  max-width: 800px;
+}
+
+.loading {
+  color: #6b6b7b;
+  font-style: italic;
+}
