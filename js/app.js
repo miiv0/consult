@@ -26,12 +26,17 @@ function render() {
       const isSelected = p.id === item.pod_id ? "selected" : "";
       options += `<option value="${p.id}" ${isSelected}>${p.name}</option>`;
     }
+    let optionsCap = "";
+    for (const f of data.capabilities) {
+      const isSelected = f.id === item.capability_id ? "selected" : "";
+      optionsCap += `<option value="${f.id}" ${isSelected}>${f.name}</option>`;
+    }
     totalHours += item.hours;
     totalCost += item.hours * pod.cost_rate;
     totalPrice += item.hours * pod.bill_rate;
     rows += `<tr>
-      <td>${cap.name}</td>
-      <td><select data-id="${item.id}">${options}</select></td>
+      <td><select data-id="${item.id}" data-field="capability_id">${optionsCap}</select></td>
+      <td><select data-id="${item.id}" data-field="pod_id">${options}</select></td>
       <td><input type="number" value="${item.hours}" data-id="${item.id}"></td>
       <td>${(item.hours * pod.cost_rate)}</td>
       <td>${(item.hours * pod.bill_rate)}</td>
@@ -86,7 +91,7 @@ function render() {
       const alloc = data.allocations.find((a) => a.id === el.dataset.id);
 
       if (el.tagName === "SELECT") {
-        alloc.pod_id = el.value;
+        alloc[el.dataset.field] = el.value;
       } else {
         const value = Number(el.value);
         if (Number.isNaN(value) || value < 0) {
