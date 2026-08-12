@@ -70,9 +70,10 @@ function render() {
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
       </table>
+      <button id="add-btn">+ Add allocation</button>
     `;
 
-  summaryEl.querySelectorAll("button").forEach((btn) => {
+  summaryEl.querySelectorAll("button[data-id]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const index = data.allocations.findIndex((a) => a.id === btn.dataset.id);
       data.allocations.splice(index, 1)
@@ -97,6 +98,18 @@ function render() {
       render();
     });
   });
+
+  const addBtn = summaryEl.querySelector("#add-btn");
+  addBtn.addEventListener("click", () => {
+    data.allocations.push({
+      id: "a" + Date.now(),
+      capability_id: data.capabilities[0].id,
+      pod_id: data.pods[0].id,
+      hours: 0,
+    });
+    render();
+  });
+
 
   console.log("Loaded bid data:", data);
 }
