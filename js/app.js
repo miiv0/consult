@@ -35,6 +35,7 @@ function render() {
       <td><input type="number" value="${item.hours}" data-id="${item.id}"></td>
       <td>${(item.hours * pod.cost_rate)}</td>
       <td>${(item.hours * pod.bill_rate)}</td>
+      <td><button data-id="${item.id}">✕</button></td>
       </tr>`;
   }
 
@@ -66,22 +67,15 @@ function render() {
       <p>Margin: ${(margin * 100).toFixed(1)}%</p>
       <p>Verdict: <span style="color:${color}">${verdict}%</span></p>
       <table>
-      <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th></tr>
+      <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
       </table>
     `;
 
-  summaryEl.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("change", () => {
-      const alloc = data.allocations.find((a) => a.id === input.dataset.id);
-      const value = Number(input.value);
-
-      if ((Number.isNaN(value)) || (value < 0)) {
-        input.value = alloc.hours;
-        return;
-      }
-
-      alloc.hours = value;
+  summaryEl.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = data.allocations.findIndex((a) => a.id === btn.dataset.id);
+      data.allocations.splice(index, 1)
       render();
     });
   });
@@ -100,11 +94,9 @@ function render() {
         }
         alloc.hours = value;
       }
-
       render();
     });
   });
-
 
   console.log("Loaded bid data:", data);
 }
