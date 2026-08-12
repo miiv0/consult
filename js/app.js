@@ -35,9 +35,9 @@ fetch("data/sample-bid.json")
     let verdict;
     const targetPercentage = margin - bid.target_margin
     if (margin >= bid.target_margin) {
-      verdict = ("Beats target by " + (targetPercentage * 100).toFixed(1));
+      verdict = ("Beats target by " + Math.abs((targetPercentage * 100).toFixed(1)));
     } else {
-      verdict = ("Below target by " + (targetPercentage * 100).toFixed(1));
+      verdict = ("Below target by " + Math.abs((targetPercentage * 100).toFixed(1)));
     }
 
     summaryEl.innerHTML = `
