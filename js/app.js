@@ -1,15 +1,8 @@
-// app.js — the behavior for the prototype.
-// Today's job: load the sample bid and prove everything is wired together.
-
-// 1. Grab the spot on the page where we'll show things.
 const summaryEl = document.getElementById("bid-summary");
 
-// 2. Load our fake "database" (the JSON file).
-//    fetch() goes and gets the file; .then() runs once it arrives.
 fetch("data/sample-bid.json")
-  .then((response) => response.json())   // turn the text into a JS object
+  .then((response) => response.json())
   .then((data) => {
-    // 3. Pull the bid out and show its name. Proof the data made it through.
     const bid = data.bid;
     let totalHours = 0;
     let totalCost = 0;
@@ -48,7 +41,6 @@ fetch("data/sample-bid.json")
       <p>Verdict: ${verdict}%</p>
     `;
 
-    // Also log the whole object so you can poke at it in the browser console.
     console.log("Loaded bid data:", data);
   })
 
