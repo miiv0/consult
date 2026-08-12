@@ -21,12 +21,17 @@ function render() {
   for (const item of data.allocations) {
     const pod = data.pods.find((p) => p.id === item.pod_id);
     const cap = data.capabilities.find((c) => c.id === item.capability_id);
+    let options = "";
+    for (const p of data.pods) {
+      const isSelected = p.id === item.pod_id ? "selected" : "";
+      options += `<option value="${p.id}" ${isSelected}>${p.name}</option>`;
+    }
     totalHours += item.hours;
     totalCost += item.hours * pod.cost_rate;
     totalPrice += item.hours * pod.bill_rate;
     rows += `<tr>
       <td>${cap.name}</td>
-      <td>${pod.name}</td>
+      <td><select data-id="${item.id}">${options}</select></td>
       <td><input type="number" value="${item.hours}" data-id="${item.id}"></td>
       <td>${(item.hours * pod.cost_rate)}</td>
       <td>${(item.hours * pod.bill_rate)}</td>
@@ -80,6 +85,26 @@ function render() {
       render();
     });
   });
+
+  summaryEl.querySelectorAll("input, select").forEach((el) => {
+    el.addEventListener("change", () => {
+      const alloc = data.allocations.find((a) => a.id === el.dataset.id);
+
+      if (el.tagName === "SELECT") {
+        alloc.pod_id = el.value;
+      } else {
+        const value = Number(el.value);
+        if (Number.isNaN(value) || value < 0) {
+          el.value = alloc.hours;
+          return;
+        }
+        alloc.hours = value;
+      }
+
+      render();
+    });
+  });
+
 
   console.log("Loaded bid data:", data);
 }
