@@ -1,3 +1,4 @@
+let data;
 const summaryEl = document.getElementById("bid-summary");
 
 fetch("data/sample-bid.json")
@@ -26,7 +27,7 @@ function render() {
     rows += `<tr>
       <td>${cap.name}</td>
       <td>${pod.name}</td>
-      <td>${item.hours}</td>
+      <td><input type="number" value="${item.hours}" data-id="${item.id}"></td>
       <td>${(item.hours * pod.cost_rate)}</td>
       <td>${(item.hours * pod.bill_rate)}</td>
       </tr>`;
@@ -64,6 +65,21 @@ function render() {
       ${rows}
       </table>
     `;
+
+  summaryEl.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("change", () => {
+      const alloc = data.allocations.find((a) => a.id === input.dataset.id);
+      const value = Number(input.value);
+
+      if ((Number.isNaN(value)) || (value < 0)) {
+        input.value = alloc.hours;
+        return;
+      }
+
+      alloc.hours = value;
+      render();
+    });
+  });
 
   console.log("Loaded bid data:", data);
 }
