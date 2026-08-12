@@ -7,12 +7,21 @@ fetch("data/sample-bid.json")
     let totalHours = 0;
     let totalCost = 0;
     let totalPrice = 0;
+    let rows = "";
 
     for (const item of data.allocations) {
       const pod = data.pods.find((p) => p.id === item.pod_id);
+      const cap = data.capabilities.find((c) => c.id === item.capability_id);
       totalHours += item.hours;
       totalCost += item.hours * pod.cost_rate;
       totalPrice += item.hours * pod.bill_rate;
+      rows += `<tr>
+      <td>${cap.name}</td>
+      <td>${pod.name}</td>
+      <td>${item.hours}</td>
+      <td>${(item.hours * pod.cost_rate)}</td>
+      <td>${(item.hours * pod.bill_rate)}</td>
+      </tr>`;
     }
 
     const profit = totalPrice - totalCost;
@@ -20,14 +29,17 @@ fetch("data/sample-bid.json")
 
     console.log("hours: " + totalHours)
     console.log("cost: " + totalCost)
-    console.log("cost: " + totalPrice)
+    console.log("price: " + totalPrice)
 
     let verdict;
+    let color;
     const targetPercentage = margin - bid.target_margin
     if (margin >= bid.target_margin) {
-      verdict = ("Beats target by " + Math.abs((targetPercentage * 100).toFixed(1)));
+      verdict = ("Beats target by " + Math.abs(targetPercentage * 100).toFixed(1));
+      color = "green"
     } else {
-      verdict = ("Below target by " + Math.abs((targetPercentage * 100).toFixed(1)));
+      verdict = ("Below target by " + Math.abs(targetPercentage * 100).toFixed(1));
+      color = "red"
     }
 
     summaryEl.innerHTML = `
@@ -38,7 +50,11 @@ fetch("data/sample-bid.json")
       <p>Total price: $${totalPrice.toLocaleString()}</p>
       <p>Total cost: $${totalCost.toLocaleString()}</p>
       <p>Margin: ${(margin * 100).toFixed(1)}%</p>
-      <p>Verdict: ${verdict}%</p>
+      <p>Verdict: <span style="color:${color}">${verdict}%</span></p>
+      <table>
+      <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th></tr>
+      ${rows}
+      </table>
     `;
 
     console.log("Loaded bid data:", data);
