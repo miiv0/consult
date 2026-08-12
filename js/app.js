@@ -54,6 +54,7 @@ fetch("data/sample-bid.json")
     // Also log the whole object so you can poke at it in the browser console.
     console.log("Loaded bid data:", data);
   })
+
   .catch((err) => {
     summaryEl.innerHTML = `<p style="color:red">Couldn't load data: ${err.message}</p>`;
   });
