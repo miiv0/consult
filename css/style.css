@@ -35,3 +35,71 @@ main {
   color: #6b6b7b;
   font-style: italic;
 }
+
+#bid-summary table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#bid-summary th,
+#bid-summary td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e0e0e6;
+  text-align: left;
+}
+
+#bid-summary th {
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Cost and Price columns read better right-aligned */
+#bid-summary td:nth-child(4),
+#bid-summary td:nth-child(5) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bid-summary tr:hover td {
+  background: #eceef2;
+}
+
+#bid-summary select,
+#bid-summary input {
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #cfcfd8;
+  border-radius: 4px;
+  font: inherit;
+}
+
+#bid-summary button {
+  padding: 0.4rem 0.8rem;
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  background: #2d2d44;
+  color: #fff;
+  cursor: pointer;
+}
+
+#bid-summary button:hover {
+  background: #3d3d5c;
+}
+
+/* Row delete buttons: compact and muted until hovered */
+#bid-summary td button {
+  padding: 0.2rem 0.5rem;
+  background: transparent;
+  color: #b02a2a;
+}
+
+#bid-summary td button:hover {
+  background: #f6dede;
+}

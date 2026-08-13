@@ -52,21 +52,26 @@ function render() {
   }
 
   const profit = totalPrice - totalCost;
-  const margin = profit / totalPrice;
 
-  console.log("hours: " + totalHours)
-  console.log("cost: " + totalCost)
-  console.log("price: " + totalPrice)
-
+  let marginDisplay;
   let verdict;
   let color;
-  const targetPercentage = margin - bid.target_margin
-  if (margin >= bid.target_margin) {
-    verdict = ("Beats target by " + Math.abs(targetPercentage * 100).toFixed(1));
-    color = "green"
+
+  if (totalPrice === 0) {
+    marginDisplay = "—";
+    verdict = "No allocations to price yet";
+    color = "grey";
   } else {
-    verdict = ("Below target by " + Math.abs(targetPercentage * 100).toFixed(1));
-    color = "red"
+    const margin = profit / totalPrice;
+    const targetPercentage = margin - bid.target_margin;
+    marginDisplay = (margin * 100).toFixed(1) + "%";
+    if (margin >= bid.target_margin) {
+      verdict = "Beats target by " + Math.abs(targetPercentage * 100).toFixed(1);
+      color = "green";
+    } else {
+      verdict = "Below target by " + Math.abs(targetPercentage * 100).toFixed(1);
+      color = "red";
+    }
   }
 
   summaryEl.innerHTML = `
@@ -76,8 +81,8 @@ function render() {
       <p>${data.allocations.length} allocations across ${data.pods.length} pods.</p>
       <p>Total price: $${totalPrice.toLocaleString()}</p>
       <p>Total cost: $${totalCost.toLocaleString()}</p>
-      <p>Margin: ${(margin * 100).toFixed(1)}%</p>
-      <p>Verdict: <span style="color:${color}">${verdict}%</span></p>
+      <p>Margin: ${marginDisplay}</p>
+      <p>Verdict: <span style="color:${color}">${verdict}</span></p>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
