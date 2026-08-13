@@ -60,7 +60,6 @@ main {
   letter-spacing: 0.03em;
 }
 
-/* Cost and Price columns read better right-aligned */
 #bid-summary td:nth-child(4),
 #bid-summary td:nth-child(5) {
   text-align: right;
@@ -93,7 +92,6 @@ main {
   background: #3d3d5c;
 }
 
-/* Row delete buttons: compact and muted until hovered */
 #bid-summary td button {
   padding: 0.2rem 0.5rem;
   background: transparent;
