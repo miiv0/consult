@@ -1,15 +1,22 @@
+const STORAGE_KEY = "consult-bid";
 let data;
 const summaryEl = document.getElementById("bid-summary");
 
-fetch("data/sample-bid.json")
-  .then((response) => response.json())
-  .then((loaded) => {
-    data = loaded;
-    render();
-  })
-  .catch((err) => {
-    summaryEl.innerHTML = `<p style="color:red">Couldn't load data: ${err.message}</p>`;
-  });
+const saved = localStorage.getItem(STORAGE_KEY);
+if (saved !== null) {
+  data = JSON.parse(saved);
+  render();
+} else {
+  fetch("data/sample-bid.json")
+    .then((response) => response.json())
+    .then((loaded) => {
+      data = loaded;
+      render();
+    })
+    .catch((err) => {
+      summaryEl.innerHTML = `<p style="color:red">Couldn't load data: ${err.message}</p>`;
+    });
+}
 
 function render() {
   const bid = data.bid;
@@ -38,8 +45,8 @@ function render() {
       <td><select data-id="${item.id}" data-field="capability_id">${optionsCap}</select></td>
       <td><select data-id="${item.id}" data-field="pod_id">${options}</select></td>
       <td><input type="number" value="${item.hours}" data-id="${item.id}"></td>
-      <td>${(item.hours * pod.cost_rate)}</td>
-      <td>${(item.hours * pod.bill_rate)}</td>
+      <td>$${(item.hours * pod.cost_rate).toLocaleString()}</td>
+      <td>$${(item.hours * pod.bill_rate).toLocaleString()}</td>
       <td><button data-id="${item.id}">✕</button></td>
       </tr>`;
   }
@@ -76,6 +83,7 @@ function render() {
       ${rows}
       </table>
       <button id="add-btn">+ Add allocation</button>
+      <button id="reset-btn">Reset</button>
     `;
 
   summaryEl.querySelectorAll("button[data-id]").forEach((btn) => {
@@ -115,6 +123,25 @@ function render() {
     render();
   });
 
+  const resetBtn = summaryEl.querySelector("#reset-btn");
+  resetBtn.addEventListener("click", () => {
+    summaryEl.innerHTML = `
+    <p><span style="color:red"> Are you sure? You will lose all your progress.</p>
+      <button id="reset-btn">Reset</button>
+      <button id="no-btn">No</button>
+    `;
+    const resetBtn = summaryEl.querySelector("#reset-btn");
+    const noBtn = summaryEl.querySelector("#no-btn");
+    resetBtn.addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    });
+    noBtn.addEventListener("click", () => {
+      render();
+    });
+  });
+
 
   console.log("Loaded bid data:", data);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
