@@ -61,11 +61,14 @@ function render() {
   let podRows = "";
   for (const id in podTotals) {
     const p = podTotals[id];
+    const podMargin = p.price === 0 ? null : (p.price - p.cost) / p.price;
+    const podMarginDisplay = podMargin === null ? "—" : (podMargin * 100).toFixed(1) + "%";
     podRows += `<tr>
     <td>${p.name}</td>
     <td>${p.hours}</td>
     <td>$${p.cost.toLocaleString()}</td>
     <td>$${p.price.toLocaleString()}</td>
+    <td>${podMarginDisplay}</td>
   </tr>`;
   }
 
@@ -107,7 +110,7 @@ function render() {
       </table>
       <h3>By Pod</h3>
       <table>
-      <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th></tr>
+      <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th>Margin</th></tr>
       ${podRows}
       </table>
       <button id="add-btn">+ Add allocation</button>
