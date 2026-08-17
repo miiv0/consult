@@ -24,10 +24,17 @@ function render() {
   let totalCost = 0;
   let totalPrice = 0;
   let rows = "";
+  let podTotals = {};
 
   for (const item of data.allocations) {
     const pod = data.pods.find((p) => p.id === item.pod_id);
     const cap = data.capabilities.find((c) => c.id === item.capability_id);
+    if (!podTotals[pod.id]) {
+      podTotals[pod.id] = { name: pod.name, hours: 0, cost: 0, price: 0 };
+    }
+    podTotals[pod.id].hours += item.hours;
+    podTotals[pod.id].cost += item.hours * pod.cost_rate;
+    podTotals[pod.id].price += item.hours * pod.bill_rate;
     let options = "";
     for (const p of data.pods) {
       const isSelected = p.id === item.pod_id ? "selected" : "";
@@ -49,6 +56,17 @@ function render() {
       <td>$${(item.hours * pod.bill_rate).toLocaleString()}</td>
       <td><button data-id="${item.id}">✕</button></td>
       </tr>`;
+  }
+
+  let podRows = "";
+  for (const id in podTotals) {
+    const p = podTotals[id];
+    podRows += `<tr>
+    <td>${p.name}</td>
+    <td>${p.hours}</td>
+    <td>$${p.cost.toLocaleString()}</td>
+    <td>$${p.price.toLocaleString()}</td>
+  </tr>`;
   }
 
   const profit = totalPrice - totalCost;
@@ -86,6 +104,11 @@ function render() {
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
+      </table>
+      <h3>By Pod</h3>
+      <table>
+      <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th></tr>
+      ${podRows}
       </table>
       <button id="add-btn">+ Add allocation</button>
       <button id="reset-btn">Reset</button>
@@ -145,7 +168,6 @@ function render() {
       render();
     });
   });
-
 
   console.log("Loaded bid data:", data);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
