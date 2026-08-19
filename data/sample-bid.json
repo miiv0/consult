@@ -3,7 +3,8 @@
     "id": "bid-001",
     "name": "Acme Bank — Mobile App Rebuild",
     "target_price": 1000000,
-    "target_margin": 0.35
+    "target_margin": 0.35,
+    "governance_carveout_pct": 0.08
   },
   "pods": [
     {
@@ -23,6 +24,12 @@
       "name": "Offshore Delivery",
       "cost_rate": 30,
       "bill_rate": 90
+    },
+    {
+      "id": "pod-gov",
+      "name": "Program Governance",
+      "cost_rate": 250,
+      "bill_rate": 500
     }
   ],
   "capabilities": [

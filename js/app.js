@@ -29,12 +29,24 @@ function render() {
   for (const item of data.allocations) {
     const pod = data.pods.find((p) => p.id === item.pod_id);
     const cap = data.capabilities.find((c) => c.id === item.capability_id);
+    const govPod = data.pods.find((p) => p.id === "pod-gov");
+    const carveHours = item.hours * bid.governance_carveout_pct;
+    const directHours = item.hours - carveHours;
+
     if (!podTotals[pod.id]) {
       podTotals[pod.id] = { name: pod.name, hours: 0, cost: 0, price: 0 };
     }
-    podTotals[pod.id].hours += item.hours;
-    podTotals[pod.id].cost += item.hours * pod.cost_rate;
-    podTotals[pod.id].price += item.hours * pod.bill_rate;
+    podTotals[pod.id].hours += directHours;
+    podTotals[pod.id].cost += directHours * pod.cost_rate;
+    podTotals[pod.id].price += directHours * pod.bill_rate;
+
+    if (!podTotals[govPod.id]) {
+      podTotals[govPod.id] = { name: govPod.name, hours: 0, cost: 0, price: 0 };
+    }
+    podTotals[govPod.id].hours += carveHours;
+    podTotals[govPod.id].cost += carveHours * govPod.cost_rate;
+    podTotals[govPod.id].price += carveHours * govPod.bill_rate;
+
     let options = "";
     for (const p of data.pods) {
       const isSelected = p.id === item.pod_id ? "selected" : "";
@@ -46,14 +58,14 @@ function render() {
       optionsCap += `<option value="${f.id}" ${isSelected}>${f.name}</option>`;
     }
     totalHours += item.hours;
-    totalCost += item.hours * pod.cost_rate;
-    totalPrice += item.hours * pod.bill_rate;
+    totalCost += directHours * pod.cost_rate + carveHours * govPod.cost_rate;
+    totalPrice += directHours * pod.bill_rate + carveHours * govPod.bill_rate;
     rows += `<tr>
       <td><select data-id="${item.id}" data-field="capability_id">${optionsCap}</select></td>
       <td><select data-id="${item.id}" data-field="pod_id">${options}</select></td>
       <td><input type="number" value="${item.hours}" data-id="${item.id}"></td>
-      <td>$${(item.hours * pod.cost_rate).toLocaleString()}</td>
-      <td>$${(item.hours * pod.bill_rate).toLocaleString()}</td>
+      <td>$${(directHours * pod.cost_rate + carveHours * govPod.cost_rate).toLocaleString()}</td>
+      <td>$${(directHours * pod.bill_rate + carveHours * govPod.bill_rate).toLocaleString()}</td>
       <td><button data-id="${item.id}">✕</button></td>
       </tr>`;
   }
@@ -105,13 +117,13 @@ function render() {
   let marginDisplay;
   let verdict;
   let color;
+  const margin = profit / totalPrice;
 
   if (totalPrice === 0) {
     marginDisplay = "—";
     verdict = "No allocations to price yet";
     color = "grey";
   } else {
-    const margin = profit / totalPrice;
     const targetPercentage = margin - bid.target_margin;
     marginDisplay = (margin * 100).toFixed(1) + "%";
     if (margin >= bid.target_margin) {
@@ -121,6 +133,20 @@ function render() {
       verdict = "Below target by " + Math.abs(targetPercentage * 100).toFixed(1) + "%";
       color = "red";
     }
+  }
+
+  const flags = [];
+
+  if (totalPrice > 0 && profit / totalPrice < bid.target_margin) {
+    flags.push({ code: "MARGIN_BELOW_TARGET", message: "Margin is below target." });
+  }
+  if (totalPrice > bid.target_price) {
+    flags.push({ code: "PRICE_ABOVE_TARGET", message: "Price is above target." });
+  }
+
+  let flagRows = "";
+  for (const flag of flags) {
+    flagRows += `<li>${flag.message}</li>`;
   }
 
   summaryEl.innerHTML = `
@@ -133,6 +159,7 @@ function render() {
       <p>Margin: ${marginDisplay}</p>
       <p>Verdict: <span style="color:${color}">${verdict}</span></p>
       <p>Price: <span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></p>
+      ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
