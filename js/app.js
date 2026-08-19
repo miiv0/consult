@@ -80,6 +80,27 @@ function render() {
   </tr>`;
   }
 
+  let priceMarginDisplay;
+  let priceVerdict;
+  let priceColor;
+
+  if (totalPrice === 0) {
+    priceMarginDisplay = "—";
+    priceVerdict = "No allocations to price yet";
+    priceColor = "grey";
+  } else {
+    const pricePercent = totalPrice / bid.target_price;
+    const priceDiff = totalPrice - bid.target_price;
+    priceMarginDisplay = "$" + Math.abs(priceDiff).toLocaleString();
+    if (priceDiff >= 0) {
+      priceVerdict = "+" + Math.abs(pricePercent * 100).toFixed(1) + "%";
+      priceColor = "red";
+    } else {
+      priceVerdict = "-" + Math.abs(pricePercent * 100).toFixed(1) + "%";
+      priceColor = "green";
+    }
+  }
+
   const profit = totalPrice - totalCost;
   let marginDisplay;
   let verdict;
@@ -94,10 +115,10 @@ function render() {
     const targetPercentage = margin - bid.target_margin;
     marginDisplay = (margin * 100).toFixed(1) + "%";
     if (margin >= bid.target_margin) {
-      verdict = "Beats target by " + Math.abs(targetPercentage * 100).toFixed(1);
+      verdict = "Beats target by " + Math.abs(targetPercentage * 100).toFixed(1) + "%";
       color = "green";
     } else {
-      verdict = "Below target by " + Math.abs(targetPercentage * 100).toFixed(1);
+      verdict = "Below target by " + Math.abs(targetPercentage * 100).toFixed(1) + "%";
       color = "red";
     }
   }
@@ -111,6 +132,7 @@ function render() {
       <p>Total cost: $${totalCost.toLocaleString()}</p>
       <p>Margin: ${marginDisplay}</p>
       <p>Verdict: <span style="color:${color}">${verdict}</span></p>
+      <p>Price: <span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></p>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
