@@ -60,20 +60,27 @@ function render() {
 
   let podRows = "";
   for (const id in podTotals) {
+    let podColor;
     const p = podTotals[id];
     const podMargin = p.price === 0 ? null : (p.price - p.cost) / p.price;
     const podMarginDisplay = podMargin === null ? "—" : (podMargin * 100).toFixed(1) + "%";
+    if (podMargin === null) {
+      podColor = "grey";
+    } else if (podMargin >= bid.target_margin) {
+      podColor = "green";
+    } else {
+      podColor = "red";
+    }
     podRows += `<tr>
     <td>${p.name}</td>
     <td>${p.hours}</td>
     <td>$${p.cost.toLocaleString()}</td>
     <td>$${p.price.toLocaleString()}</td>
-    <td>${podMarginDisplay}</td>
+    <td><span style="color:${podColor}">${podMarginDisplay}</span></td>
   </tr>`;
   }
 
   const profit = totalPrice - totalCost;
-
   let marginDisplay;
   let verdict;
   let color;
