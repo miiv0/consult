@@ -1,5 +1,6 @@
 const STORAGE_KEY = "consult-bid";
 let data;
+let lastSimResults = null;
 const summaryEl = document.getElementById("bid-summary");
 
 function getHoursRange(item) {
@@ -41,12 +42,14 @@ function getPercentile(results, percentile) {
 const saved = localStorage.getItem(STORAGE_KEY);
 if (saved !== null) {
   data = JSON.parse(saved);
+  lastSimResults = runSimulation(1000);
   render();
 } else {
   fetch("data/sample-bid.json")
     .then((response) => response.json())
     .then((loaded) => {
       data = loaded;
+      lastSimResults = runSimulation(1000);
       render();
     })
     .catch((err) => {
@@ -185,10 +188,9 @@ function render() {
     flagRows += `<li>${flag.message}</li>`;
   }
 
-  const simResults = runSimulation(1000);
-  let p50 = getPercentile(simResults, 0.5);
-  let p80 = getPercentile(simResults, 0.8);
-  let p90 = getPercentile(simResults, 0.9);
+  const p50 = getPercentile(lastSimResults, 0.5);
+  const p80 = getPercentile(lastSimResults, 0.8);
+  const p90 = getPercentile(lastSimResults, 0.9);
 
   summaryEl.innerHTML = `
       <h2>${bid.name}</h2>
@@ -202,9 +204,10 @@ function render() {
       <p>Price: <span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></p>
       ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
       <h3>Risk (Monte Carlo)</h3>
-      <p>P50: $${p50.toLocaleString()}</p>
-      <p>P80: $${p80.toLocaleString()}</p>
-      <p>P90: $${p90.toLocaleString()}</p>
+      <p id="p50-display">P50: $${p50.toLocaleString()}</p>
+      <p id="p80-display">P80: $${p80.toLocaleString()}</p>
+      <p id="p90-display">P90: $${p90.toLocaleString()}</p>
+      <button id="run-sim-button">Run Simulation</button>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
@@ -242,6 +245,17 @@ function render() {
       }
       render();
     });
+  });
+
+  const runSimBtn = summaryEl.querySelector("#run-sim-button");
+  runSimBtn.addEventListener("click", () => {
+    const simResults = runSimulation(1000);
+    const p50 = getPercentile(simResults, 0.5);
+    const p80 = getPercentile(simResults, 0.8);
+    const p90 = getPercentile(simResults, 0.9);
+    document.getElementById("p50-display").textContent = "P50: $" + p50.toLocaleString();
+    document.getElementById("p80-display").textContent = "P80: $" + p80.toLocaleString();
+    document.getElementById("p90-display").textContent = "P90: $" + p90.toLocaleString();
   });
 
   const addBtn = summaryEl.querySelector("#add-btn");
