@@ -2,6 +2,9 @@ const STORAGE_KEY = "consult-bid";
 let data;
 const summaryEl = document.getElementById("bid-summary");
 
+const hoursLow = item.hours * 0.85;
+const hoursHigh = item.hours * 1.15;
+
 const saved = localStorage.getItem(STORAGE_KEY);
 if (saved !== null) {
   data = JSON.parse(saved);

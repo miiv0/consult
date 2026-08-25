@@ -1,7 +1,7 @@
 {
   "bid": {
     "id": "bid-001",
-    "name": "Acme Bank — Mobile App Rebuild",
+    "name": "Acme Bank: Mobile App Rebuild",
     "target_price": 1000000,
     "target_margin": 0.35,
     "governance_carveout_pct": 0.08
