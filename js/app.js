@@ -2,8 +2,20 @@ const STORAGE_KEY = "consult-bid";
 let data;
 const summaryEl = document.getElementById("bid-summary");
 
-const hoursLow = item.hours * 0.85;
-const hoursHigh = item.hours * 1.15;
+function getHoursRange(item) {
+  return {
+    low: item.hours * 0.85,
+    high: item.hours * 1.15,
+  };
+}
+
+function sampleHours(item) {
+  const range = getHoursRange(item);
+  let numberRange = range.low + Math.random() * (range.high - range.low)
+  return numberRange
+}
+
+
 
 const saved = localStorage.getItem(STORAGE_KEY);
 if (saved !== null) {
