@@ -29,6 +29,12 @@ function runSimulation(iterations) {
   return results
 }
 
+function getPercentile(results, percentile) {
+  const sorted = results.slice().sort((a, b) => a - b);
+  const index = Math.floor(percentile * sorted.length);
+  return sorted[Math.min(index, sorted.length - 1)];
+}
+
 const saved = localStorage.getItem(STORAGE_KEY);
 if (saved !== null) {
   data = JSON.parse(saved);
@@ -254,6 +260,11 @@ function render() {
       render();
     });
   });
+
+  const simResults = runSimulation(1000);
+  console.log("P50:", getPercentile(simResults, 0.5));
+  console.log("P80:", getPercentile(simResults, 0.8));
+  console.log("P90:", getPercentile(simResults, 0.9));
 
   console.log("Loaded bid data:", data);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
