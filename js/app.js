@@ -17,12 +17,15 @@ function sampleHours(item) {
 
 function runSimulation(iterations) {
   let results = []
+  const govPod = data.pods.find((p) => p.id === "pod-gov");
   for (let i = 0; i < iterations; i++) {
     let runTotal = 0;
     for (const item of data.allocations) {
       const pod = data.pods.find((p) => p.id === item.pod_id);
       const sampled = sampleHours(item)
-      runTotal += sampled * pod.bill_rate
+      const carveHours = sampled * data.bid.governance_carveout_pct;
+      const directHours = sampled - carveHours;
+      runTotal += directHours * pod.bill_rate + carveHours * govPod.bill_rate
     }
     results.push(runTotal)
   }
@@ -182,6 +185,11 @@ function render() {
     flagRows += `<li>${flag.message}</li>`;
   }
 
+  const simResults = runSimulation(1000);
+  let p50 = getPercentile(simResults, 0.5);
+  let p80 = getPercentile(simResults, 0.8);
+  let p90 = getPercentile(simResults, 0.9);
+
   summaryEl.innerHTML = `
       <h2>${bid.name}</h2>
       <p>Target price: $${bid.target_price.toLocaleString()}</p>
@@ -193,6 +201,10 @@ function render() {
       <p>Verdict: <span style="color:${color}">${verdict}</span></p>
       <p>Price: <span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></p>
       ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
+      <h3>Risk (Monte Carlo)</h3>
+      <p>P50: $${p50.toLocaleString()}</p>
+      <p>P80: $${p80.toLocaleString()}</p>
+      <p>P90: $${p90.toLocaleString()}</p>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
@@ -260,11 +272,6 @@ function render() {
       render();
     });
   });
-
-  const simResults = runSimulation(1000);
-  console.log("P50:", getPercentile(simResults, 0.5));
-  console.log("P80:", getPercentile(simResults, 0.8));
-  console.log("P90:", getPercentile(simResults, 0.9));
 
   console.log("Loaded bid data:", data);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
