@@ -15,7 +15,19 @@ function sampleHours(item) {
   return numberRange
 }
 
-
+function runSimulation(iterations) {
+  let results = []
+  for (let i = 0; i < iterations; i++) {
+    let runTotal = 0;
+    for (const item of data.allocations) {
+      const pod = data.pods.find((p) => p.id === item.pod_id);
+      const sampled = sampleHours(item)
+      runTotal += sampled * pod.bill_rate
+    }
+    results.push(runTotal)
+  }
+  return results
+}
 
 const saved = localStorage.getItem(STORAGE_KEY);
 if (saved !== null) {
