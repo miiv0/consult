@@ -16,14 +16,15 @@ function sampleHours(item) {
   return numberRange
 }
 
-function getParametricEffort(capability) {
+function getParametricEffort(capability, bid) {
   const A = 2.94;
-  const E = 0.91;
+  const B = 0.91;
+  const E = B + 0.01 * getScaleFactorSum(bid);
   return A * Math.pow(capability.size_ksloc, E);
 }
 
-function getParametricHours(capability) {
-  const effort = getParametricEffort(capability);
+function getParametricHours(capability, bid) {
+  const effort = getParametricEffort(capability, bid);
   const hoursPerPersonMonth = 152;
   return effort * hoursPerPersonMonth;
 }
@@ -49,6 +50,23 @@ function getPercentile(results, percentile) {
   const sorted = results.slice().sort((a, b) => a - b);
   const index = Math.floor(percentile * sorted.length);
   return sorted[Math.min(index, sorted.length - 1)];
+}
+
+const scaleFactorTable = {
+  PREC: { VL: 6.20, L: 4.96, N: 3.72, H: 2.48, VH: 1.24, XH: 0.00 },
+  FLEX: { VL: 5.07, L: 4.05, N: 3.04, H: 2.03, VH: 1.01, XH: 0.00 },
+  RESL: { VL: 7.07, L: 5.65, N: 4.24, H: 2.83, VH: 1.41, XH: 0.00 },
+  TEAM: { VL: 5.48, L: 4.38, N: 3.29, H: 2.19, VH: 1.10, XH: 0.00 },
+  PMAT: { VL: 7.80, L: 6.24, N: 4.68, H: 3.12, VH: 1.56, XH: 0.00 }
+}
+
+function getScaleFactorSum(bid) {
+  let sum = 0;
+  for (const factor in bid.scale_factors) {
+    const rating = bid.scale_factors[factor];
+    sum += scaleFactorTable[factor][rating]
+  }
+  return sum;
 }
 
 const saved = localStorage.getItem(STORAGE_KEY);
@@ -136,8 +154,7 @@ function render() {
   let capRows = "";
   for (const cap of data.capabilities) {
     const bottomUpHours = capTotals[cap.id] ? capTotals[cap.id].hours : 0;
-    const parametricHours = getParametricHours(cap);
-
+    const parametricHours = getParametricHours(cap, bid);
     capRows += `<tr>
     <td>${cap.name}</td>
     <td>${bottomUpHours.toFixed(0)}</td>
@@ -252,6 +269,11 @@ function render() {
       <table>
       <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th>Margin</th></tr>
       ${podRows}
+      </table>
+      <h3>Effort Estimate Comparison</h3>
+      <table>
+      <tr><th>Capability</th><th>Bottom-Up Hours</th><th>Parametric Hours</th></tr>
+      ${capRows}
       </table>
       <button id="add-btn">+ Add allocation</button>
       <button id="reset-btn">Reset</button>

@@ -4,7 +4,14 @@
     "name": "Acme Bank: Mobile App Rebuild",
     "target_price": 1000000,
     "target_margin": 0.35,
-    "governance_carveout_pct": 0.08
+    "governance_carveout_pct": 0.08,
+    "scale_factors": {
+      "PREC": "N",
+      "FLEX": "N",
+      "RESL": "N",
+      "TEAM": "N",
+      "PMAT": "N"
+    }
   },
   "pods": [
     {
