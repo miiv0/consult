@@ -11,6 +11,25 @@
       "RESL": "N",
       "TEAM": "N",
       "PMAT": "N"
+    },
+    "effort_multipliers": {
+      "RELY": "N",
+      "DATA": "N",
+      "CPLX": "N",
+      "RUSE": "N",
+      "DOCU": "N",
+      "TIME": "N",
+      "STOR": "N",
+      "PVOL": "N",
+      "ACAP": "N",
+      "PCAP": "N",
+      "PCON": "N",
+      "AEXP": "N",
+      "PEXP": "N",
+      "LTEX": "N",
+      "TOOL": "N",
+      "SITE": "N",
+      "SCED": "N"
     }
   },
   "pods": [
