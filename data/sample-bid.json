@@ -35,15 +35,18 @@
   "capabilities": [
     {
       "id": "cap-login",
-      "name": "Login & Authentication"
+      "name": "Login & Authentication",
+      "size_ksloc": 4
     },
     {
       "id": "cap-payments",
-      "name": "Payments"
+      "name": "Payments",
+      "size_ksloc": 15
     },
     {
       "id": "cap-migrate",
-      "name": "Data Migration"
+      "name": "Data Migration",
+      "size_ksloc": 5
     }
   ],
   "allocations": [

@@ -16,6 +16,18 @@ function sampleHours(item) {
   return numberRange
 }
 
+function getParametricEffort(capability) {
+  const A = 2.94;
+  const E = 0.91;
+  return A * Math.pow(capability.size_ksloc, E);
+}
+
+function getParametricHours(capability) {
+  const effort = getParametricEffort(capability);
+  const hoursPerPersonMonth = 152;
+  return effort * hoursPerPersonMonth;
+}
+
 function runSimulation(iterations) {
   let results = []
   const govPod = data.pods.find((p) => p.id === "pod-gov");
@@ -91,11 +103,13 @@ function render() {
       const isSelected = p.id === item.pod_id ? "selected" : "";
       options += `<option value="${p.id}" ${isSelected}>${p.name}</option>`;
     }
+
     let optionsCap = "";
     for (const f of data.capabilities) {
       const isSelected = f.id === item.capability_id ? "selected" : "";
       optionsCap += `<option value="${f.id}" ${isSelected}>${f.name}</option>`;
     }
+
     totalHours += item.hours;
     totalCost += directHours * pod.cost_rate + carveHours * govPod.cost_rate;
     totalPrice += directHours * pod.bill_rate + carveHours * govPod.bill_rate;
@@ -107,6 +121,28 @@ function render() {
       <td>$${(directHours * pod.bill_rate + carveHours * govPod.bill_rate).toLocaleString()}</td>
       <td><button data-id="${item.id}">✕</button></td>
       </tr>`;
+  }
+
+  let capTotals = {};
+
+  for (const item of data.allocations) {
+    const cap = data.capabilities.find((c) => c.id === item.capability_id);
+    if (!capTotals[cap.id]) {
+      capTotals[cap.id] = { name: cap.name, hours: 0 };
+    }
+    capTotals[cap.id].hours += item.hours
+  }
+
+  let capRows = "";
+  for (const cap of data.capabilities) {
+    const bottomUpHours = capTotals[cap.id] ? capTotals[cap.id].hours : 0;
+    const parametricHours = getParametricHours(cap);
+
+    capRows += `<tr>
+    <td>${cap.name}</td>
+    <td>${bottomUpHours.toFixed(0)}</td>
+    <td>${parametricHours.toFixed(0)}</td>
+  </tr>`;
   }
 
   let podRows = "";
