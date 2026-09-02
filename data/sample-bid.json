@@ -100,5 +100,19 @@
       "pod_id": "pod-off",
       "hours": 500
     }
+  ],
+  "resources": [
+    {
+      "id": "res-sme",
+      "name": "Client Security SME",
+      "cost_rate": 0,
+      "bill_rate": 0
+    },
+    {
+      "id": "a5",
+      "capability_id": "cap-login",
+      "resource_id": "res-sme",
+      "hours": 40
+    }
   ]
 }

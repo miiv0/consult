@@ -126,7 +126,12 @@ function render() {
   let podTotals = {};
 
   for (const item of data.allocations) {
-    const pod = data.pods.find((p) => p.id === item.pod_id);
+    let pod;
+    if (item.pod_id) {
+      pod = data.pods.find((p) => p.id === item.pod_id);
+    } else {
+      pod = data.resources.find((r) => r.id === item.resource_id);
+    }
     const cap = data.capabilities.find((c) => c.id === item.capability_id);
     const govPod = data.pods.find((p) => p.id === "pod-gov");
     const carveHours = item.hours * bid.governance_carveout_pct;
