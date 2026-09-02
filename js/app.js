@@ -28,7 +28,12 @@ function runSimulation(iterations) {
   for (let i = 0; i < iterations; i++) {
     let runTotal = 0;
     for (const item of data.allocations) {
-      const pod = data.pods.find((p) => p.id === item.pod_id);
+      let pod;
+      if (item.pod_id) {
+        pod = data.pods.find((p) => p.id === item.pod_id);
+      } else {
+        pod = data.resources.find((r) => r.id === item.resource_id);
+      }
       const sampled = sampleHours(item)
       const carveHours = sampled * data.bid.governance_carveout_pct;
       const directHours = sampled - carveHours;
@@ -152,10 +157,17 @@ function render() {
     podTotals[govPod.id].price += carveHours * govPod.bill_rate;
 
     let options = "";
+    options += "<optgroup label='Pods'>";
     for (const p of data.pods) {
       const isSelected = p.id === item.pod_id ? "selected" : "";
       options += `<option value="${p.id}" ${isSelected}>${p.name}</option>`;
     }
+    options += "</optgroup><optgroup label='Resources'>";
+    for (const r of data.resources) {
+      const isSelected = r.id === item.resource_id ? "selected" : "";
+      options += `<option value="${r.id}" ${isSelected}>${r.name}</option>`;
+    }
+    options += "</optgroup>";
 
     let optionsCap = "";
     for (const f of data.capabilities) {
@@ -327,7 +339,18 @@ function render() {
       const alloc = data.allocations.find((a) => a.id === el.dataset.id);
 
       if (el.tagName === "SELECT") {
-        alloc[el.dataset.field] = el.value;
+        if (el.dataset.field === "capability_id") {
+          alloc.capability_id = el.value;
+        } else {
+          const isPod = data.pods.find((p) => p.id === el.value);
+          if (isPod) {
+            alloc.pod_id = el.value;
+            delete alloc.resource_id;
+          } else {
+            alloc.resource_id = el.value;
+            delete alloc.pod_id;
+          }
+        }
       } else {
         const value = Number(el.value);
         if (Number.isNaN(value) || value < 0) {
