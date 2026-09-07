@@ -292,6 +292,11 @@ function render() {
   const p80 = getPercentile(lastSimResults, 0.8);
   const p90 = getPercentile(lastSimResults, 0.9);
 
+  let snapshotRows = "";
+  for (const snap of data.snapshots) {
+    snapshotRows += `<li>${snap.label} — ${snap.taken_at}</li>`;
+  }
+
   summaryEl.innerHTML = `
       <h2>${bid.name}</h2>
       <p>Target price: $${bid.target_price.toLocaleString()}</p>
@@ -303,6 +308,7 @@ function render() {
       <p>Verdict: <span style="color:${color}">${verdict}</span></p>
       <p>Price: <span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></p>
       ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
+      <h3>Snapshots</h3><ul>${snapshotRows}</ul> 
       <h3>Risk (Monte Carlo)</h3>
       <p id="p50-display">P50: $${p50.toLocaleString()}</p>
       <p id="p80-display">P80: $${p80.toLocaleString()}</p>
