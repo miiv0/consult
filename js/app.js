@@ -323,6 +323,7 @@ function render() {
       ${capRows}
       </table>
       <button id="add-btn">+ Add allocation</button>
+      <button id="snap-btn">Save Snapshot</button>
       <button id="reset-btn">Reset</button>
     `;
 
@@ -381,6 +382,17 @@ function render() {
       capability_id: data.capabilities[0].id,
       pod_id: data.pods[0].id,
       hours: 0,
+    });
+    render();
+  });
+
+  const snapBtn = summaryEl.querySelector("#snap-btn");
+  snapBtn.addEventListener("click", () => {
+    data.snapshots.push({
+      "label": "Submitted to client",
+      "taken_at": (new Date().toISOString()),
+      "bid": JSON.parse(JSON.stringify(data.bid)),
+      "allocations": JSON.parse(JSON.stringify(data.allocations))
     });
     render();
   });
