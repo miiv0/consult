@@ -1,10 +1,8 @@
-require("express")
-
 const express = require("express");
 const app = express();
 
 app.get("/hello", (req, res) => {
-    console.log("hi!")
+    res.send("Hi!")
 });
 
 app.listen(3000, () => {
