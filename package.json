@@ -1,0 +1,23 @@
+{
+  "name": "consult",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miiv0/consult.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miiv0/consult/issues"
+  },
+  "homepage": "https://github.com/miiv0/consult#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
