@@ -84,7 +84,7 @@ app.post("/draft-allocations", async (req, res) => {
 })
 
 app.post("/explain", async (req, res) => {
-    const data = req.body.bidData
+    const bidData = req.body.bidData
     async function fetchData() {
         const url = "http://localhost:11434/api/generate";
         try {
@@ -96,6 +96,7 @@ app.post("/explain", async (req, res) => {
                     You are helping to summarize the bid in plain English.
                     I want you to note wheather the margin is healthy, whether price is over/under target, 
                     and call out anything in the flags list.
+                    Here is the bid data: ${JSON.stringify(bidData)}
                     `
                     , stream: false
                 })

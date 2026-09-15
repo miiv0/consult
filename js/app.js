@@ -317,7 +317,7 @@ function render() {
       <p id="p90-display">P90: $${p90.toLocaleString()}</p>
       <p><button id="run-sim-button">Run Simulation</button></p>
       <p><input id="draft-description" type="text" placeholder="Type new prompt here"><button id="draft-btn">Send</button></p>
-      <p><button id="#explain-btn)">Summarize</button></p>
+      <p><button id="explain-btn">Summarize</button></p>
       <p id="explain-output"></p>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
@@ -363,24 +363,13 @@ function render() {
 
   summaryEl.querySelectorAll("#explain-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      const description = document.getElementById("draft-description").value
-      const response = await fetch("http://localhost:3001/draft-allocations", {
+      const response = await fetch("http://localhost:3001/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description, pods: data.pods, capabilities: data.capabilities })
+        body: JSON.stringify({ bidData: { bid, totalPrice, totalCost, margin, verdict, flags, podTotals } })
       });
       const text = await response.text();
-      const parsed = JSON.parse(text)
-      const allocationsFromAI = Array.isArray(parsed) ? parsed : [parsed];
-      for (const item of allocationsFromAI) {
-        data.allocations.push({
-          id: "a" + Date.now(),
-          capability_id: item.capability_id,
-          pod_id: item.pod_id,
-          hours: item.hours
-        });
-      }
-      render()
+      document.getElementById("explain-output").textContent = text;
     });
   });
 
