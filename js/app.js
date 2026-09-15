@@ -297,6 +297,8 @@ function render() {
     snapshotRows += `<li>${snap.label} — ${snap.taken_at}</li>`;
   }
 
+  let summary = ""
+
   summaryEl.innerHTML = `
       <h2>${bid.name}</h2>
       <p>Target price: $${bid.target_price.toLocaleString()}</p>
@@ -313,7 +315,10 @@ function render() {
       <p id="p50-display">P50: $${p50.toLocaleString()}</p>
       <p id="p80-display">P80: $${p80.toLocaleString()}</p>
       <p id="p90-display">P90: $${p90.toLocaleString()}</p>
-      <button id="run-sim-button">Run Simulation</button>
+      <p><button id="run-sim-button">Run Simulation</button></p>
+      <p><input id="draft-description" type="text" placeholder="Type new prompt here"><button id="draft-btn">Send</button></p>
+      <p><button id="#explain-btn)">Summarize</button></p>
+      <p id="explain-output"></p>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
@@ -333,6 +338,52 @@ function render() {
       <button id="reset-btn">Reset</button>
     `;
 
+  summaryEl.querySelectorAll("#draft-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const description = document.getElementById("draft-description").value
+      const response = await fetch("http://localhost:3001/draft-allocations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description, pods: data.pods, capabilities: data.capabilities })
+      });
+      const text = await response.text();
+      const parsed = JSON.parse(text)
+      const allocationsFromAI = Array.isArray(parsed) ? parsed : [parsed];
+      for (const item of allocationsFromAI) {
+        data.allocations.push({
+          id: "a" + Date.now(),
+          capability_id: item.capability_id,
+          pod_id: item.pod_id,
+          hours: item.hours
+        });
+      }
+      render()
+    });
+  });
+
+  summaryEl.querySelectorAll("#explain-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const description = document.getElementById("draft-description").value
+      const response = await fetch("http://localhost:3001/draft-allocations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description, pods: data.pods, capabilities: data.capabilities })
+      });
+      const text = await response.text();
+      const parsed = JSON.parse(text)
+      const allocationsFromAI = Array.isArray(parsed) ? parsed : [parsed];
+      for (const item of allocationsFromAI) {
+        data.allocations.push({
+          id: "a" + Date.now(),
+          capability_id: item.capability_id,
+          pod_id: item.pod_id,
+          hours: item.hours
+        });
+      }
+      render()
+    });
+  });
+
   summaryEl.querySelectorAll("button[data-id]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const index = data.allocations.findIndex((a) => a.id === btn.dataset.id);
@@ -341,7 +392,7 @@ function render() {
     });
   });
 
-  summaryEl.querySelectorAll("input, select").forEach((el) => {
+  summaryEl.querySelectorAll("input[data-id], select[data-id]").forEach((el) => {
     el.addEventListener("change", () => {
       const alloc = data.allocations.find((a) => a.id === el.dataset.id);
 

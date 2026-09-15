@@ -1,0 +1,67 @@
+{
+    "snapshots": [],
+    "bid": {
+        "id": "",
+        "name": "",
+        "target_price": ,
+        "target_margin": ,
+        "governance_carveout_pct": ,
+        "scale_factors": {
+            "PREC": "N",
+            "FLEX": "N",
+            "RESL": "N",
+            "TEAM": "N",
+            "PMAT": "N"
+        },
+        "effort_multipliers": {
+            "RELY": "N",
+            "DATA": "N",
+            "CPLX": "N",
+            "RUSE": "N",
+            "DOCU": "N",
+            "TIME": "N",
+            "STOR": "N",
+            "PVOL": "N",
+            "ACAP": "N",
+            "PCAP": "N",
+            "PCON": "N",
+            "AEXP": "N",
+            "PEXP": "N",
+            "LTEX": "N",
+            "TOOL": "N",
+            "SITE": "N",
+            "SCED": "N"
+        }
+    },
+    "pods": [
+        {
+            "id": "",
+            "name": "",
+            "cost_rate": ,
+            "bill_rate":
+        }
+    ],
+    "capabilities": [
+        {
+            "id": "",
+            "name": "",
+            "size_ksloc":
+        }
+    ],
+    "allocations": [
+        {
+            "id": "a1",
+            "capability_id": "cap-login",
+            "pod_id": "pod-ny",
+            "hours": 400
+        },
+    ],
+    "resources": [
+        {
+            "id": "res-sme",
+            "name": "Client Security SME",
+            "cost_rate": 0,
+            "bill_rate": 0
+        }
+    ]
+}
