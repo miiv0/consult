@@ -363,10 +363,11 @@ function render() {
 
   summaryEl.querySelectorAll("#explain-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
+      marginFormat = margin.toFixed(1) + "%", totalPrice.toLocaleString()
       const response = await fetch("http://localhost:3001/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bidData: { bid, totalPrice, totalCost, margin, verdict, flags, podTotals } })
+        body: JSON.stringify({ bidData: { bid, totalPrice, totalCost, marginFormat, verdict, flags, podTotals } })
       });
       const text = await response.text();
       document.getElementById("explain-output").textContent = text;
