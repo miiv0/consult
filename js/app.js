@@ -465,10 +465,10 @@ function render() {
   const resetBtn = summaryEl.querySelector("#reset-btn");
   resetBtn.addEventListener("click", () => {
     summaryEl.innerHTML = `
-    < p ><span style="color:red"> Are you sure? You will lose all your progress.</p>
+    <p><span style="color:red"> Are you sure? You will lose all your progress.</p>
       <button id="reset-btn">Reset</button>
       <button id="no-btn">No</button>
-  `;
+    `;
     const resetBtn = summaryEl.querySelector("#reset-btn");
     const noBtn = summaryEl.querySelector("#no-btn");
     resetBtn.addEventListener("click", () => {
