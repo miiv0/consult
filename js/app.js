@@ -306,7 +306,29 @@ function render() {
           <div class="stat-label">Total Price</div>
           <div class="stat-value">$${totalPrice.toLocaleString()}</div>
         </div>
+        <div class="stat-tile">
+          <div class="stat-label">Total Cost</div>
+          <div class="stat-value">$${totalCost.toLocaleString()}</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Total Hours</div>
+          <div class="stat-value">${totalHours.toLocaleString()}</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Margin</div>
+          <div class="stat-value"><span style="color:${color}">${marginDisplay}</span></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Verdict</div>
+          <div class="stat-value"><span style="color:${color}">${verdict}</span></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Price vs. Target</div>
+          <div class="stat-value"><span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></div>
+        </div>
       </div>
+      ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
+      <h3>Snapshots</h3><ul>${snapshotRows}</ul>
       <h3>Risk (Monte Carlo)</h3>
       <p id="p50-display">P50: $${p50.toLocaleString()}</p>
       <p id="p80-display">P80: $${p80.toLocaleString()}</p>
@@ -332,7 +354,7 @@ function render() {
       <button id="add-btn">+ Add allocation</button>
       <button id="snap-btn">Save Snapshot</button>
       <button id="reset-btn">Reset</button>
-    `;
+  `;
 
   summaryEl.querySelectorAll("#draft-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -443,10 +465,10 @@ function render() {
   const resetBtn = summaryEl.querySelector("#reset-btn");
   resetBtn.addEventListener("click", () => {
     summaryEl.innerHTML = `
-    <p><span style="color:red"> Are you sure? You will lose all your progress.</p>
+    < p ><span style="color:red"> Are you sure? You will lose all your progress.</p>
       <button id="reset-btn">Reset</button>
       <button id="no-btn">No</button>
-    `;
+  `;
     const resetBtn = summaryEl.querySelector("#reset-btn");
     const noBtn = summaryEl.querySelector("#no-btn");
     resetBtn.addEventListener("click", () => {
