@@ -301,16 +301,12 @@ function render() {
 
   summaryEl.innerHTML = `
       <h2>${bid.name}</h2>
-      <p>Target price: $${bid.target_price.toLocaleString()}</p>
-      <p>Target margin: ${bid.target_margin * 100}%</p>
-      <p>${data.allocations.length} allocations across ${data.pods.length} pods.</p>
-      <p>Total price: $${totalPrice.toLocaleString()}</p>
-      <p>Total cost: $${totalCost.toLocaleString()}</p>
-      <p>Margin: ${marginDisplay}</p>
-      <p>Verdict: <span style="color:${color}">${verdict}</span></p>
-      <p>Price: <span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></p>
-      ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
-      <h3>Snapshots</h3><ul>${snapshotRows}</ul> 
+      <div class="stat-grid">
+        <div class="stat-tile">
+          <div class="stat-label">Total Price</div>
+          <div class="stat-value">$${totalPrice.toLocaleString()}</div>
+        </div>
+      </div>
       <h3>Risk (Monte Carlo)</h3>
       <p id="p50-display">P50: $${p50.toLocaleString()}</p>
       <p id="p80-display">P80: $${p80.toLocaleString()}</p>
