@@ -291,6 +291,17 @@ function render() {
   const p50 = getPercentile(lastSimResults, 0.5);
   const p80 = getPercentile(lastSimResults, 0.8);
   const p90 = getPercentile(lastSimResults, 0.9);
+  const min = Math.min(...lastSimResults);
+  const max = Math.max(...lastSimResults);
+
+  function getRangePosition(value, min, max) {
+    const range = (value - min) / (max - min) * 100
+    return range
+  }
+
+  const p50Position = getRangePosition(p50, min, max);
+  const p80Position = getRangePosition(p80, min, max);
+  const p90Position = getRangePosition(p90, min, max);
 
   let snapshotRows = "";
   for (const snap of data.snapshots) {
@@ -330,9 +341,17 @@ function render() {
       ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
       <h3>Snapshots</h3><ul>${snapshotRows}</ul>
       <h3>Risk (Monte Carlo)</h3>
-      <p id="p50-display">P50: $${p50.toLocaleString()}</p>
-      <p id="p80-display">P80: $${p80.toLocaleString()}</p>
-      <p id="p90-display">P90: $${p90.toLocaleString()}</p>
+      <div class="range-track">
+        <div class="range-marker" style="left: ${p50Position}%; background: #60A5FA">
+          <span style="top: -1.45rem" class="range-marker-label">P50: $${p50.toLocaleString()}</span>
+        </div>
+        <div class="range-marker" style="left: ${p80Position}%; background: #faaf60">
+          <span style="top: -2.45rem" color="blue" class="range-marker-label">P80: $${p80.toLocaleString()}</span>
+        </div>
+        <div class="range-marker" style="left: ${p90Position}%; background: #fa6060">
+          <span style="top: -1.45rem" class="range-marker-label">P90: $${p90.toLocaleString()}</span>
+        </div>
+      </div>
       <p><button id="run-sim-button">Run Simulation</button></p>
       <p><input id="draft-description" type="text" placeholder="Type new prompt here"><button id="draft-btn">Send</button></p>
       <p><button id="explain-btn">Summarize</button></p>
@@ -431,13 +450,8 @@ function render() {
 
   const runSimBtn = summaryEl.querySelector("#run-sim-button");
   runSimBtn.addEventListener("click", () => {
-    const simResults = runSimulation(1000);
-    const p50 = getPercentile(simResults, 0.5);
-    const p80 = getPercentile(simResults, 0.8);
-    const p90 = getPercentile(simResults, 0.9);
-    document.getElementById("p50-display").textContent = "P50: $" + p50.toLocaleString();
-    document.getElementById("p80-display").textContent = "P80: $" + p80.toLocaleString();
-    document.getElementById("p90-display").textContent = "P90: $" + p90.toLocaleString();
+    lastSimResults = runSimulation(1000);
+    render();
   });
 
   const addBtn = summaryEl.querySelector("#add-btn");
