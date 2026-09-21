@@ -58,7 +58,7 @@ h1 {
 }
 
 main {
-  max-width: 800px;
+  max-width: 1200px;
 }
 
 .loading {
@@ -186,4 +186,22 @@ main {
   font-size: 0.75rem;
   color: var(--silver);
   white-space: nowrap;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  backdrop-filter: blur(8px);
+  overflow-x: auto;
+}
+
+.panel-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--silver);
+  margin-bottom: 1rem;
 }

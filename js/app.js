@@ -338,15 +338,13 @@ function render() {
           <div class="stat-value"><span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></div>
         </div>
       </div>
-      ${flags.length > 0 ? `<h3>Flags</h3><ul>${flagRows}</ul>` : ""}
-      <h3>Snapshots</h3><ul>${snapshotRows}</ul>
       <h3>Risk (Monte Carlo)</h3>
       <div class="range-track">
         <div class="range-marker" style="left: ${p50Position}%; background: #60A5FA">
           <span style="top: -1.45rem" class="range-marker-label">P50: $${p50.toLocaleString()}</span>
         </div>
         <div class="range-marker" style="left: ${p80Position}%; background: #faaf60">
-          <span style="top: -2.45rem" color="blue" class="range-marker-label">P80: $${p80.toLocaleString()}</span>
+          <span style="top: -2.45rem" class="range-marker-label">P80: $${p80.toLocaleString()}</span>
         </div>
         <div class="range-marker" style="left: ${p90Position}%; background: #fa6060">
           <span style="top: -1.45rem" class="range-marker-label">P90: $${p90.toLocaleString()}</span>
@@ -356,23 +354,38 @@ function render() {
       <p><input id="draft-description" type="text" placeholder="Type new prompt here"><button id="draft-btn">Send</button></p>
       <p><button id="explain-btn">Summarize</button></p>
       <p id="explain-output"></p>
+      <div class="panel">
+      <div class="panel-title">Flags</div>
+      ${flags.length > 0 ? `<ul>${flagRows}</ul>` : ""}
+      </div>
+      <div class="panel">
+      <div class="panel-title">Breakdown Table</div>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
       </table>
-      <h3>By Pod</h3>
+      </div>
+      <div class="panel">
+      <div class="panel-title">By Pod</div>
       <table>
       <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th>Margin</th></tr>
       ${podRows}
       </table>
-      <h3>Effort Estimate Comparison</h3>
+      </div>
+      <div class="panel">
+      <div class="panel-title">Effort Estimate Comparison</div>
       <table>
       <tr><th>Capability</th><th>Bottom-Up Hours</th><th>Parametric Hours</th></tr>
       ${capRows}
       </table>
+      </div>
       <button id="add-btn">+ Add allocation</button>
       <button id="snap-btn">Save Snapshot</button>
       <button id="reset-btn">Reset</button>
+      <div class="panel">
+      <div class="panel-title">Snapshots</div>
+      <ul>${snapshotRows}</ul>
+      </div>
   `;
 
   summaryEl.querySelectorAll("#draft-btn").forEach((btn) => {
