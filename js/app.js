@@ -365,6 +365,9 @@ function render() {
       ${rows}
       </table>
       </div>
+      <button id="add-btn">+ Add allocation</button>
+      <button id="snap-btn">Save Snapshot</button>
+      <button id="reset-btn">Reset</button>
       <div class="panel">
       <div class="panel-title">By Pod</div>
       <table>
@@ -379,9 +382,6 @@ function render() {
       ${capRows}
       </table>
       </div>
-      <button id="add-btn">+ Add allocation</button>
-      <button id="snap-btn">Save Snapshot</button>
-      <button id="reset-btn">Reset</button>
       <div class="panel">
       <div class="panel-title">Snapshots</div>
       <ul>${snapshotRows}</ul>
