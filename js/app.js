@@ -252,6 +252,7 @@ function render() {
     }
   }
 
+
   const profit = totalPrice - totalCost;
   let marginDisplay;
   let verdict;
@@ -271,6 +272,21 @@ function render() {
     } else {
       verdict = "Below target by " + Math.abs(targetPercentage * 100).toFixed(1) + "%";
       color = "red";
+    }
+  }
+
+  let scaleDisplay = ""
+  let scaleColor;
+  const scaleFactor = bid.target_price / totalPrice
+  if (totalPrice === 0) {
+    scaleDisplay = "—"; scaleColor = "black";
+  } else {
+    if (scaleFactor > 1) {
+      scaleDisplay = (scaleFactor * 100).toFixed(0) + "%";
+      scaleColor = "green";
+    } else {
+      scaleDisplay = (scaleFactor * 100).toFixed(0) + "%";
+      scaleColor = "red";
     }
   }
 
@@ -336,6 +352,10 @@ function render() {
         <div class="stat-tile">
           <div class="stat-label">Price vs. Target</div>
           <div class="stat-value"><span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Scale Factor</div>
+          <div class="stat-value"><span style="color:${scaleColor}">${scaleDisplay}</span></div>
         </div>
       </div>
       <div class="panel">
