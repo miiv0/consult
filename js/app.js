@@ -331,7 +331,7 @@ function render() {
       <div class="stat-grid">
         <div class="stat-tile">
           <div class="stat-label">Target Price</div>
-          <div class="stat-value">$${bid.target_price}</div>
+          <div class="stat-value">$${(bid.target_price).toLocaleString(undefined, { notation: "compact" })}</div>
         </div>
         <div class="stat-tile">
           <div class="stat-label">Total Price</div>
