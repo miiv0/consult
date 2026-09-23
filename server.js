@@ -93,7 +93,9 @@ app.post("/explain", async (req, res) => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     model: "llama3.2:latest", prompt: `
-                    You are helping to summarize the bid in plain English.
+                    You are helping to summarize the bid for a company.
+                    Structure the response like a paragraph detailing a couple of factors, 
+                    making it sound professional but consise and to the point.
                     I want you to note wheather the margin is healthy, whether price is over/under target, 
                     and call out anything in the flags list.
                     Here is the bid data: ${JSON.stringify(bidData)}

@@ -339,6 +339,7 @@ function render() {
         </div>
       </div>
       <h3>Risk (Monte Carlo)</h3>
+      <button id="run-sim-button">Run Simulation</button>
       <div class="range-track">
         <div class="range-marker" style="left: ${p50Position}%; background: #60A5FA">
           <span style="top: -1.45rem" class="range-marker-label">P50: $${p50.toLocaleString()}</span>
@@ -350,10 +351,9 @@ function render() {
           <span style="top: -1.45rem" class="range-marker-label">P90: $${p90.toLocaleString()}</span>
         </div>
       </div>
-      <p><button id="run-sim-button">Run Simulation</button></p>
-      <p><input id="draft-description" type="text" placeholder="Type new prompt here"><button id="draft-btn">Send</button></p>
-      <p><button id="explain-btn">Summarize</button></p>
-      <p id="explain-output"></p>
+      <p><input id="draft-description" type="text" placeholder="Enter new pod description"><button id="draft-btn">Send</button></p>
+      <p><button id="explain-btn">Summarize bid</button></p>
+      <div id=explain-panel></div>
       <div class="panel">
       <div class="panel-title">Flags</div>
       ${flags.length > 0 ? `<ul>${flagRows}</ul>` : ""}
@@ -420,7 +420,11 @@ function render() {
         body: JSON.stringify({ bidData: { bid, totalPrice, totalCost, marginFormat, verdict, flags, podTotals } })
       });
       const text = await response.text();
-      document.getElementById("explain-output").textContent = text;
+      document.getElementById("explain-panel").innerHTML = `
+      <div class="panel">
+      <div class="panel-title">Summary</div>
+      <div>${text}</div>
+      </div>`;
     });
   });
 
