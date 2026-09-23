@@ -279,7 +279,7 @@ function render() {
   let scaleColor;
   const scaleFactor = bid.target_price / totalPrice
   if (totalPrice === 0) {
-    scaleDisplay = "—"; scaleColor = "black";
+    scaleDisplay = "—"; scaleColor = "grey";
   } else {
     if (scaleFactor > 1) {
       scaleDisplay = (scaleFactor * 100).toFixed(0) + "%";
@@ -330,6 +330,10 @@ function render() {
       <h2>${bid.name}</h2>
       <div class="stat-grid">
         <div class="stat-tile">
+          <div class="stat-label">Target Price</div>
+          <div class="stat-value">$${bid.target_price}</div>
+        </div>
+        <div class="stat-tile">
           <div class="stat-label">Total Price</div>
           <div class="stat-value">$${totalPrice.toLocaleString()}</div>
         </div>
@@ -356,6 +360,7 @@ function render() {
         <div class="stat-tile">
           <div class="stat-label">Scale Factor</div>
           <div class="stat-value"><span style="color:${scaleColor}">${scaleDisplay}</span></div>
+          <button id="solve-btn">Apply</button>
         </div>
       </div>
       <div class="panel">
@@ -490,6 +495,15 @@ function render() {
   const runSimBtn = summaryEl.querySelector("#run-sim-button");
   runSimBtn.addEventListener("click", () => {
     lastSimResults = runSimulation(1000);
+    render();
+  });
+
+  const runScaleBtn = summaryEl.querySelector("#solve-btn");
+  runScaleBtn.addEventListener("click", () => {
+    for (const item of data.allocations) {
+      if (totalPrice === 0) return;
+      item.hours = Math.round(item.hours * scaleFactor)
+    }
     render();
   });
 
