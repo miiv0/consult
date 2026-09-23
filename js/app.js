@@ -338,7 +338,8 @@ function render() {
           <div class="stat-value"><span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></div>
         </div>
       </div>
-      <h3>Risk (Monte Carlo)</h3>
+      <div class="panel">
+      <div class="panel-title">Risk (Monte Carlo)</div>
       <button id="run-sim-button">Run Simulation</button>
       <div class="range-track">
         <div class="range-marker" style="left: ${p50Position}%; background: #60A5FA">
@@ -351,12 +352,6 @@ function render() {
           <span style="top: -1.45rem" class="range-marker-label">P90: $${p90.toLocaleString()}</span>
         </div>
       </div>
-      <p><input id="draft-description" type="text" placeholder="Enter new pod description"><button id="draft-btn">Send</button></p>
-      <p><button id="explain-btn">Summarize bid</button></p>
-      <div id=explain-panel></div>
-      <div class="panel">
-      <div class="panel-title">Flags</div>
-      ${flags.length > 0 ? `<ul>${flagRows}</ul>` : ""}
       </div>
       <div class="panel">
       <div class="panel-title">Breakdown Table</div>
@@ -364,12 +359,24 @@ function render() {
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
       </table>
+      <input id="draft-description" type="text" placeholder="Enter new pod description"><button id="draft-btn">Send</button>
       </div>
+      <button id="explain-btn">Summarize bid</button>
       <button id="add-btn">+ Add allocation</button>
       <button id="snap-btn">Save Snapshot</button>
       <button id="reset-btn">Reset</button>
+      <div id=explain-panel></div>
+      ${flags.length > 0 ? `<div class="panel">
+      <div class="panel-title">Flags</div>
+      <ul>${flagRows}</ul>
+      </div>` : ""}
+      ${snapshotRows.length > 0 ? `<div class="panel">
+      <div class="panel-title">Snapshots</div>
+      <ul>${snapshotRows}</ul>
+      </div>` : ""}
+      <div id=flag-panel></div>
       <div class="panel">
-      <div class="panel-title">By Pod</div>
+      <div class="panel-title">Breakdown By Pod</div>
       <table>
       <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th>Margin</th></tr>
       ${podRows}
@@ -381,10 +388,6 @@ function render() {
       <tr><th>Capability</th><th>Bottom-Up Hours</th><th>Parametric Hours</th></tr>
       ${capRows}
       </table>
-      </div>
-      <div class="panel">
-      <div class="panel-title">Snapshots</div>
-      <ul>${snapshotRows}</ul>
       </div>
   `;
 
@@ -485,7 +488,7 @@ function render() {
   const snapBtn = summaryEl.querySelector("#snap-btn");
   snapBtn.addEventListener("click", () => {
     data.snapshots.push({
-      "label": "Submitted to client",
+      "label": "Snapshot saved",
       "taken_at": (new Date().toISOString()),
       "bid": JSON.parse(JSON.stringify(data.bid)),
       "allocations": JSON.parse(JSON.stringify(data.allocations))
