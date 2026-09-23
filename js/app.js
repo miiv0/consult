@@ -374,7 +374,6 @@ function render() {
       <div class="panel-title">Snapshots</div>
       <ul>${snapshotRows}</ul>
       </div>` : ""}
-      <div id=flag-panel></div>
       <div class="panel">
       <div class="panel-title">Breakdown By Pod</div>
       <table>
