@@ -278,6 +278,7 @@ function render() {
   let scaleDisplay = ""
   let scaleColor;
   const scaleFactor = bid.target_price / totalPrice
+
   if (totalPrice === 0) {
     scaleDisplay = "—"; scaleColor = "grey";
   } else {
@@ -287,6 +288,20 @@ function render() {
     } else {
       scaleDisplay = (scaleFactor * 100).toFixed(0) + "%";
       scaleColor = "red";
+    }
+  }
+
+  let floorDisplay = "";
+  let floorColor;
+  if (bid.target_margin === 1 || totalCost === 0) {
+    floorDisplay = "—"; floorColor = "grey";
+  } else {
+    const floorPrice = totalCost / (1 - bid.target_margin);
+    floorDisplay = "$" + floorPrice.toLocaleString(undefined, { notation: "compact" })
+    if (totalPrice >= floorPrice) {
+      floorColor = "green";
+    } else {
+      floorColor = "red";
     }
   }
 
@@ -361,6 +376,10 @@ function render() {
           <div class="stat-label">Scale Factor</div>
           <div class="stat-value"><span style="color:${scaleColor}">${scaleDisplay}</span></div>
           <button id="solve-btn">Apply</button>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Floor Price</div>
+          <div class="stat-value"><span style="color:${floorColor}">${floorDisplay}</span></div>
         </div>
       </div>
       <div class="panel">
