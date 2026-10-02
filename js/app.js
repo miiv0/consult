@@ -104,16 +104,24 @@ function getScaleFactorSum(bid) {
   return sum;
 }
 
+const themeBtn = document.getElementById("theme-btn");
+
+function updateThemeLabel(theme) {
+  themeBtn.textContent = theme === "dark" ? "☀ Light" : "☾ Dark";
+}
+
 const savedTheme = localStorage.getItem("theme");
 if (savedTheme !== null) {
   document.documentElement.dataset.theme = savedTheme;
 }
+updateThemeLabel(savedTheme);
 
-document.getElementById("theme-btn").addEventListener("click", () => {
+themeBtn.addEventListener("click", () => {
   const current = document.documentElement.dataset.theme;
   const next = current === "dark" ? "light" : "dark";
   document.documentElement.dataset.theme = next;
   localStorage.setItem("theme", next);
+  updateThemeLabel(next);
 });
 
 const saved = localStorage.getItem(STORAGE_KEY);
