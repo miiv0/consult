@@ -104,6 +104,18 @@ function getScaleFactorSum(bid) {
   return sum;
 }
 
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme !== null) {
+  document.documentElement.dataset.theme = savedTheme;
+}
+
+document.getElementById("theme-btn").addEventListener("click", () => {
+  const current = document.documentElement.dataset.theme;
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem("theme", next);
+});
+
 const saved = localStorage.getItem(STORAGE_KEY);
 if (saved !== null) {
   data = JSON.parse(saved);
