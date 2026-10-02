@@ -205,3 +205,18 @@ main {
   color: var(--silver);
   margin-bottom: 1rem;
 }
+
+#theme-btn {
+  padding: 0.4rem 0.9rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ivory);
+  background: var(--base-soft);
+  border: 1px solid var(--graphite-soft);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+#theme-btn:hover {
+  background: var(--graphite);
+}
