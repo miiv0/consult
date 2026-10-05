@@ -44,6 +44,9 @@ function runSimulation(iterations) {
   return results
 }
 
+function getBestMarginPod() {
+}
+
 function getPercentile(results, percentile) {
   const sorted = results.slice().sort((a, b) => a - b);
   const index = Math.floor(percentile * sorted.length);
