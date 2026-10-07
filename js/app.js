@@ -427,12 +427,12 @@ function render() {
         <div class="stat-tile">
           <div class="stat-label">Scale Factor</div>
           <div class="stat-value"><span style="color:${scaleColor}">${scaleDisplay}</span></div>
-          <button id="solve-btn">Apply</button>
+          <button id="solve-btn">Scale</button>
         </div>
         <div class="stat-tile">
           <div class="stat-label">Shift to ${bestPod.name}</div>
           <div class="stat-value"><span style="color:${shiftColor}">${shiftDisplay}</span></div>
-          <button id="shift-btn">Apply</button>
+          <button id="shift-btn">Shift</button>
         </div>
       </div>
       <div class="panel">
