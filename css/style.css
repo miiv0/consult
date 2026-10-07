@@ -43,7 +43,8 @@ body {
 }
 
 header {
-  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
   border-bottom: 2px solid var(--graphite);
   padding-bottom: 1rem;
   position: relative;
@@ -60,6 +61,7 @@ h1 {
 
 main {
   max-width: 1200px;
+  margin: 0 auto;
 }
 
 .loading {
