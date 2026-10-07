@@ -44,6 +44,14 @@ function runSimulation(iterations) {
   return results
 }
 
+function formatMoney(x) {
+  return "$" + x.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function formatPercent(x) {
+  return (x * 100).toFixed(1) + "%"
+}
+
 function getBestMarginPod() {
   let best = null;
   let bestMargin = null;
@@ -158,7 +166,6 @@ if (saved !== null) {
 
 function render() {
   const bid = data.bid;
-
   let totalHours = 0;
   let totalCost = 0;
   let totalPrice = 0;
@@ -275,8 +282,8 @@ function render() {
     priceVerdict = "No allocations to price yet";
     priceColor = "grey";
   } else {
-    const pricePercent = totalPrice / bid.target_price;
     const priceDiff = totalPrice - bid.target_price;
+    const pricePercent = priceDiff / bid.target_price;
     priceMarginDisplay = "$" + Math.abs(priceDiff).toLocaleString();
     if (priceDiff >= 0) {
       priceVerdict = "+" + Math.abs(pricePercent * 100).toFixed(1) + "%";
@@ -286,7 +293,6 @@ function render() {
       priceColor = "green";
     }
   }
-
 
   const profit = totalPrice - totalCost;
   let marginDisplay;
@@ -512,11 +518,10 @@ function render() {
 
   summaryEl.querySelectorAll("#explain-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      marginFormat = margin.toFixed(1) + "%", totalPrice.toLocaleString()
       const response = await fetch("http://localhost:3001/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bidData: { bid, totalPrice, totalCost, marginFormat, verdict, flags, podTotals } })
+        body: JSON.stringify({ bidData: { bid, totalPrice: formatMoney(totalPrice), totalCost: formatMoney(totalCost), margin: formatPercent(margin), verdict, flags, podTotals } })
       });
       const text = await response.text();
       document.getElementById("explain-panel").innerHTML = `
