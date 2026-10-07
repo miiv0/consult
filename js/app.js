@@ -224,8 +224,8 @@ function render() {
       <td><select data-id="${item.id}" data-field="capability_id">${optionsCap}</select></td>
       <td><select data-id="${item.id}" data-field="pod_id">${options}</select></td>
       <td><input type="number" value="${item.hours}" data-id="${item.id}"></td>
-      <td>$${(directHours * pod.cost_rate + carveHours * govPod.cost_rate).toLocaleString()}</td>
-      <td>$${(directHours * pod.bill_rate + carveHours * govPod.bill_rate).toLocaleString()}</td>
+      <td>${formatMoney(directHours * pod.cost_rate + carveHours * govPod.cost_rate)}</td>
+      <td>${formatMoney(directHours * pod.bill_rate + carveHours * govPod.bill_rate)}</td>
       <td><button data-id="${item.id}">✕</button></td>
       </tr>`;
   }
@@ -256,7 +256,7 @@ function render() {
     let podColor;
     const p = podTotals[id];
     const podMargin = p.price === 0 ? null : (p.price - p.cost) / p.price;
-    const podMarginDisplay = podMargin === null ? "—" : (podMargin * 100).toFixed(1) + "%";
+    const podMarginDisplay = podMargin === null ? "—" : formatPercent(podMargin);
     if (podMargin === null) {
       podColor = "grey";
     } else if (podMargin >= bid.target_margin) {
@@ -267,8 +267,8 @@ function render() {
     podRows += `<tr>
     <td>${p.name}</td>
     <td>${p.hours}</td>
-    <td>$${p.cost.toLocaleString()}</td>
-    <td>$${p.price.toLocaleString()}</td>
+    <td>${formatMoney(p.cost)}</td>
+    <td>${formatMoney(p.price)}</td>
     <td><span style="color:${podColor}">${podMarginDisplay}</span></td>
   </tr>`;
   }
@@ -284,12 +284,12 @@ function render() {
   } else {
     const priceDiff = totalPrice - bid.target_price;
     const pricePercent = priceDiff / bid.target_price;
-    priceMarginDisplay = "$" + Math.abs(priceDiff).toLocaleString();
+    priceMarginDisplay = formatMoney(Math.abs(priceDiff));
     if (priceDiff >= 0) {
-      priceVerdict = "+" + Math.abs(pricePercent * 100).toFixed(1) + "%";
+      priceVerdict = "+" + formatPercent(Math.abs(pricePercent));
       priceColor = "red";
     } else {
-      priceVerdict = "-" + Math.abs(pricePercent * 100).toFixed(1) + "%";
+      priceVerdict = "-" + formatPercent(Math.abs(pricePercent));
       priceColor = "green";
     }
   }
@@ -306,12 +306,12 @@ function render() {
     color = "grey";
   } else {
     const targetPercentage = margin - bid.target_margin;
-    marginDisplay = (margin * 100).toFixed(1) + "%";
+    marginDisplay = formatPercent(margin);
     if (margin >= bid.target_margin) {
-      verdict = "Beats target by " + Math.abs(targetPercentage * 100).toFixed(1) + "%";
+      verdict = "Beats target by " + formatPercent(Math.abs(targetPercentage));
       color = "green";
     } else {
-      verdict = "Below target by " + Math.abs(targetPercentage * 100).toFixed(1) + "%";
+      verdict = "Below target by " + formatPercent(Math.abs(targetPercentage));
       color = "red";
     }
   }
@@ -348,7 +348,7 @@ function render() {
 
   const bestPod = getBestMarginPod();
   const bestPodMargin = (bestPod.bill_rate - bestPod.cost_rate) / bestPod.bill_rate
-  const shiftDisplay = (bestPodMargin * 100).toFixed(1) + "%";
+  const shiftDisplay = formatPercent(bestPodMargin);
 
   let canShift = false;
   for (const item of data.allocations) {
@@ -404,11 +404,11 @@ function render() {
         </div>
         <div class="stat-tile">
           <div class="stat-label">Total Price</div>
-          <div class="stat-value">$${totalPrice.toLocaleString()}</div>
+          <div class="stat-value">${formatMoney(totalPrice)}</div>
         </div>
         <div class="stat-tile">
           <div class="stat-label">Total Cost</div>
-          <div class="stat-value">$${totalCost.toLocaleString()}</div>
+          <div class="stat-value">${formatMoney(totalCost)}</div>
         </div>
         <div class="stat-tile">
           <div class="stat-label">Total Hours</div>
@@ -446,13 +446,13 @@ function render() {
       <button id="run-sim-button">Run Simulation</button>
       <div class="range-track">
         <div class="range-marker" style="left: ${p50Position}%; background: #60A5FA">
-          <span style="top: -1.45rem" class="range-marker-label">P50: $${p50.toLocaleString()}</span>
+          <span style="top: -1.45rem" class="range-marker-label">P50: ${formatMoney(p50)}</span>
         </div>
         <div class="range-marker" style="left: ${p80Position}%; background: #faaf60">
-          <span style="top: -2.45rem" class="range-marker-label">P80: $${p80.toLocaleString()}</span>
+          <span style="top: -2.45rem" class="range-marker-label">P80: ${formatMoney(p80)}</span>
         </div>
         <div class="range-marker" style="left: ${p90Position}%; background: #fa6060">
-          <span style="top: -1.45rem" class="range-marker-label">P90: $${p90.toLocaleString()}</span>
+          <span style="top: -1.45rem" class="range-marker-label">P90: ${formatMoney(p90)}</span>
         </div>
       </div>
       </div>
