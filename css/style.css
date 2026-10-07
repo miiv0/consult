@@ -136,13 +136,16 @@ main {
 }
 
 .stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
   margin: 1.5rem 0;
 }
 
 .stat-tile {
+  flex: 1 1 200px;
+  max-width: 235px;
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: 10px;
