@@ -45,6 +45,17 @@ function runSimulation(iterations) {
 }
 
 function getBestMarginPod() {
+  let best = null;
+  let bestMargin = null;
+  for (const pod of data.pods) {
+    if (pod.id === "pod-gov") continue;
+    const margin = (pod.bill_rate - pod.cost_rate) / pod.bill_rate
+    if (best === null || margin > bestMargin) {
+      best = pod;
+      bestMargin = margin;
+    }
+  }
+  return best
 }
 
 function getPercentile(results, percentile) {
@@ -147,6 +158,7 @@ if (saved !== null) {
 
 function render() {
   const bid = data.bid;
+
   let totalHours = 0;
   let totalCost = 0;
   let totalPrice = 0;
@@ -328,6 +340,19 @@ function render() {
     }
   }
 
+  const bestPod = getBestMarginPod();
+  const bestPodMargin = (bestPod.bill_rate - bestPod.cost_rate) / bestPod.bill_rate
+  const shiftDisplay = (bestPodMargin * 100).toFixed(1) + "%";
+
+  let canShift = false;
+  for (const item of data.allocations) {
+    if (!item.pod_id) continue;
+    if (item.pod_id !== bestPod.id) {
+      canShift = true;
+    }
+  }
+  const shiftColor = canShift ? "green" : "grey";
+
   const flags = [];
 
   if (totalPrice > 0 && profit / totalPrice < bid.target_margin) {
@@ -396,13 +421,18 @@ function render() {
           <div class="stat-value"><span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></div>
         </div>
         <div class="stat-tile">
+          <div class="stat-label">Floor Price</div>
+          <div class="stat-value"><span style="color:${floorColor}">${floorDisplay}</span></div>
+        </div>
+        <div class="stat-tile">
           <div class="stat-label">Scale Factor</div>
           <div class="stat-value"><span style="color:${scaleColor}">${scaleDisplay}</span></div>
           <button id="solve-btn">Apply</button>
         </div>
         <div class="stat-tile">
-          <div class="stat-label">Floor Price</div>
-          <div class="stat-value"><span style="color:${floorColor}">${floorDisplay}</span></div>
+          <div class="stat-label">Shift to ${bestPod.name}</div>
+          <div class="stat-value"><span style="color:${shiftColor}">${shiftDisplay}</span></div>
+          <button id="shift-btn">Apply</button>
         </div>
       </div>
       <div class="panel">
@@ -547,6 +577,16 @@ function render() {
       item.hours = Math.round(item.hours * scaleFactor)
     }
     render();
+  });
+
+  const runShiftBtn = summaryEl.querySelector("#shift-btn");
+  runShiftBtn.addEventListener("click", () => {
+    const bestPod = getBestMarginPod()
+    for (const item of data.allocations) {
+      if (!item.pod_id) continue;
+      item.pod_id = bestPod.id
+    }
+    render()
   });
 
   const addBtn = summaryEl.querySelector("#add-btn");
