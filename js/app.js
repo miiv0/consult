@@ -52,11 +52,34 @@ function formatPercent(x) {
   return (x * 100).toFixed(1) + "%"
 }
 
+function createEmptyBid() {
+  return {
+    bid: {
+      id: "bid-" + Date.now(),
+      name: "",
+      target_price: 1000000,
+      target_margin: 0.35,
+      governance_carveout_pct: 0.08,
+      scale_factors: { PREC: "N", FLEX: "N", RESL: "N", TEAM: "N", PMAT: "N" },
+      effort_multipliers: {
+        RELY: "N", DATA: "N", CPLX: "N", RUSE: "N", DOCU: "N", TIME: "N",
+        STOR: "N", PVOL: "N", ACAP: "N", PCAP: "N", PCON: "N", AEXP: "N",
+        PEXP: "N", LTEX: "N", TOOL: "N", SITE: "N", SCED: "N"
+      }
+    },
+    pods: [{ id: "pod-gov", name: "Program Governance", cost_rate: 250, bill_rate: 500 }],
+    resources: [],
+    capabilities: [],
+    allocations: [],
+    snapshots: []
+  };
+}
+
 function getBestMarginPod() {
   let best = null;
   let bestMargin = null;
   for (const pod of data.pods) {
-    if (pod.id === "pod-gov") continue;
+    if (pod.id === "pod-gov" || pod.bill_rate <= 0) continue;
     const margin = (pod.bill_rate - pod.cost_rate) / pod.bill_rate
     if (best === null || margin > bestMargin) {
       best = pod;
@@ -368,12 +391,12 @@ function render() {
   }
 
   const bestPod = getBestMarginPod();
-  const bestPodMargin = (bestPod.bill_rate - bestPod.cost_rate) / bestPod.bill_rate
-  const shiftDisplay = formatPercent(bestPodMargin);
+  const shiftLabel = bestPod === null ? "Shift" : "Shift to " + bestPod.name;
+  const shiftDisplay = bestPod === null ? "—" : formatPercent((bestPod.bill_rate - bestPod.cost_rate) / bestPod.bill_rate);
 
   let canShift = false;
   for (const item of data.allocations) {
-    if (!item.pod_id) continue;
+    if (!item.pod_id || bestPod === null) continue;
     if (item.pod_id !== bestPod.id) {
       canShift = true;
     }
@@ -401,6 +424,7 @@ function render() {
   const max = Math.max(...lastSimResults);
 
   function getRangePosition(value, min, max) {
+    if (max === min) return 50;
     const range = (value - min) / (max - min) * 100
     return range
   }
@@ -422,6 +446,7 @@ function render() {
         <div class="title-actions">
           <button id="explain-btn">Summarize bid</button>
           <button id="snap-btn">Save Snapshot</button>
+          <button id="new-bid-btn">New Bid</button>
           <button id="reset-btn">Reset</button>
         </div>
       </div>
@@ -469,7 +494,7 @@ function render() {
           <button id="solve-btn">Scale</button>
         </div>
         <div class="stat-tile">
-          <div class="stat-label">Shift to ${bestPod.name}</div>
+          <div class="stat-label">${shiftLabel}</div>
           <div class="stat-value"><span style="color:${shiftColor}">${shiftDisplay}</span></div>
           <button id="shift-btn">Shift</button>
         </div>
@@ -708,6 +733,7 @@ function render() {
   const runShiftBtn = summaryEl.querySelector("#shift-btn");
   runShiftBtn.addEventListener("click", () => {
     const bestPod = getBestMarginPod()
+    if (bestPod === null) return;
     for (const item of data.allocations) {
       if (!item.pod_id) continue;
       item.pod_id = bestPod.id
@@ -717,10 +743,12 @@ function render() {
 
   const addAllocBtn = summaryEl.querySelector("#add-alloc-btn");
   addAllocBtn.addEventListener("click", () => {
+    if (data.capabilities.length === 0) return;
+    const firstPod = data.pods.find((p) => p.id !== "pod-gov") || data.pods[0];
     data.allocations.push({
       id: "a" + Date.now(),
       capability_id: data.capabilities[0].id,
-      pod_id: data.pods[0].id,
+      pod_id: firstPod.id,
       hours: 0,
     });
     render();
@@ -772,6 +800,23 @@ function render() {
       "allocations": JSON.parse(JSON.stringify(data.allocations))
     });
     render();
+  });
+
+  const newBidBtn = summaryEl.querySelector("#new-bid-btn");
+  newBidBtn.addEventListener("click", () => {
+    summaryEl.innerHTML = `
+    <p><span style="color:var(--bad)">Start a new bid? Your current bid will be replaced.</span></p>
+      <button id="confirm-new-btn">New Bid</button>
+      <button id="cancel-new-btn">No</button>
+    `;
+    summaryEl.querySelector("#confirm-new-btn").addEventListener("click", () => {
+      data = createEmptyBid();
+      lastSimResults = runSimulation(1000);
+      render();
+    });
+    summaryEl.querySelector("#cancel-new-btn").addEventListener("click", () => {
+      render();
+    });
   });
 
   const resetBtn = summaryEl.querySelector("#reset-btn");
