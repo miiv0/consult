@@ -111,6 +111,29 @@ main {
   font: inherit;
 }
 
+#bid-summary #bid-name {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.2rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ivory);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  outline: none;
+}
+
+#bid-summary #bid-name:hover {
+  border-bottom-color: var(--graphite-soft);
+}
+
+#bid-summary #bid-name:focus {
+  border-bottom-color: var(--silver);
+}
+
 #bid-summary button {
   padding: 0.4rem 0.8rem;
   margin-right: 0.5rem;

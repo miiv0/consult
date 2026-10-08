@@ -396,7 +396,7 @@ function render() {
   let summary = ""
 
   summaryEl.innerHTML = `
-      <h2>${bid.name}</h2>
+      <input id="bid-name" value="${bid.name}" placeholder="Untitled Project">
       <div class="stat-grid">
         <div class="stat-tile">
           <div class="stat-label">Target Price</div>
@@ -572,6 +572,12 @@ function render() {
   const runSimBtn = summaryEl.querySelector("#run-sim-button");
   runSimBtn.addEventListener("click", () => {
     lastSimResults = runSimulation(1000);
+    render();
+  });
+
+  const changeTitleBtn = summaryEl.querySelector("#bid-name");
+  changeTitleBtn.addEventListener("change", () => {
+    data.bid.name = changeTitleBtn.value;
     render();
   });
 
