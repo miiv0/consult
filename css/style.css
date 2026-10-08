@@ -176,6 +176,13 @@ main {
   background: var(--bad-soft);
 }
 
+#bid-summary td button:disabled {
+  color: var(--muted);
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: transparent;
+}
+
 .stat-grid {
   display: flex;
   flex-wrap: wrap;

@@ -275,10 +275,12 @@ function render() {
 
   let podEditRows = "";
   for (const pod of data.pods) {
+    const inUse = data.allocations.some((a) => a.pod_id === pod.id);
     podEditRows += `<tr>
     <td><input data-pod-id="${pod.id}" data-field="name" value="${pod.name}"></td>
     <td><input data-pod-id="${pod.id}" data-field="cost_rate" type="number" value="${pod.cost_rate}"></td>
     <td><input data-pod-id="${pod.id}" data-field="bill_rate" type="number" value="${pod.bill_rate}"></td>
+    <td>${pod.id === "pod-gov" ? "" : `<button data-del-pod="${pod.id}" ${inUse ? "disabled" : ""}>✕</button>`}</td>
   </tr>`;
   }
 
@@ -475,10 +477,10 @@ function render() {
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
       </table>
+      <button id="add-alloc-btn">+ Add allocation</button>
       <div class="draft-row"><input id="draft-description" type="text" placeholder="Describe work to draft allocations with AI…"><button id="draft-btn">Send</button></div>
       </div>
       <button id="explain-btn">Summarize bid</button>
-      <button id="add-btn">+ Add allocation</button>
       <button id="snap-btn">Save Snapshot</button>
       <button id="reset-btn">Reset</button>
       <div id=explain-panel></div>
@@ -493,9 +495,10 @@ function render() {
       <div class="panel">
       <div class="panel-title">Pods</div>
       <table>
-      <tr><th>Name</th><th>Cost Rate</th><th>Bill Rate</th></tr>
+      <tr><th>Name</th><th>Cost Rate</th><th>Bill Rate</th><th></th></tr>
       ${podEditRows}
       </table>
+      <button id="add-pod-btn">+ Add pod</button>
       </div>
       <div class="panel">
       <div class="panel-title">Breakdown By Pod</div>
@@ -675,8 +678,8 @@ function render() {
     render()
   });
 
-  const addBtn = summaryEl.querySelector("#add-btn");
-  addBtn.addEventListener("click", () => {
+  const addAllocBtn = summaryEl.querySelector("#add-alloc-btn");
+  addAllocBtn.addEventListener("click", () => {
     data.allocations.push({
       id: "a" + Date.now(),
       capability_id: data.capabilities[0].id,
@@ -684,6 +687,25 @@ function render() {
       hours: 0,
     });
     render();
+  });
+
+  const addPodBtn = summaryEl.querySelector("#add-pod-btn");
+  addPodBtn.addEventListener("click", () => {
+    data.pods.push({
+      id: "pod-" + Date.now(),
+      name: "New Pod",
+      cost_rate: 0,
+      bill_rate: 0
+    });
+    render();
+  });
+
+  summaryEl.querySelectorAll("button[data-del-pod]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = data.pods.findIndex((p) => p.id === btn.dataset.delPod);
+      data.pods.splice(index, 1);
+      render();
+    });
   });
 
   const snapBtn = summaryEl.querySelector("#snap-btn");
