@@ -498,7 +498,7 @@ function render() {
       <tr><th>Name</th><th>Size (KSLOC)</th><th></th></tr>
       ${capEditRows}
       </table>
-      <p class="hint">Size is the estimated thousands of lines of code (KSLOC) — e.g. 4 ≈ 4,000 lines. It only drives the parametric hours in Effort Estimate Comparison; it doesn't change price.</p>
+      <p class="hint">Size = estimated thousands of lines of code (4 = 4,000 lines).</p>
       <button id="add-cap-btn">+ Add capability</button>
       </div>
       <div class="panel">
