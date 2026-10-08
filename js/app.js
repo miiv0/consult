@@ -400,7 +400,11 @@ function render() {
       <div class="stat-grid">
         <div class="stat-tile">
           <div class="stat-label">Target Price</div>
-          <div class="stat-value">$${(bid.target_price).toLocaleString(undefined, { notation: "compact" })}</div>
+          <input id="target-price" type="text" inputmode="numeric" value="${bid.target_price.toLocaleString()}">
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Target Margin</div>
+          <input id="target-margin" type="number" value="${bid.target_margin * 100}">
         </div>
         <div class="stat-tile">
           <div class="stat-label">Total Price</div>
@@ -578,6 +582,44 @@ function render() {
   const changeTitleBtn = summaryEl.querySelector("#bid-name");
   changeTitleBtn.addEventListener("change", () => {
     data.bid.name = changeTitleBtn.value;
+    render();
+  });
+
+  const changeTargetPriceBtn = summaryEl.querySelector("#target-price");
+  changeTargetPriceBtn.addEventListener("input", () => {
+    const text = changeTargetPriceBtn.value;
+    const digitsBeforeCursor = text.slice(0, changeTargetPriceBtn.selectionStart).replace(/\D/g, "").length;
+    const digits = text.replace(/\D/g, "");
+    const formatted = digits === "" ? "" : Number(digits).toLocaleString();
+    changeTargetPriceBtn.value = formatted;
+
+    let cursor = 0;
+    let seen = 0;
+    while (seen < digitsBeforeCursor && cursor < formatted.length) {
+      if (/\d/.test(formatted[cursor])) seen++;
+      cursor++;
+    }
+    changeTargetPriceBtn.setSelectionRange(cursor, cursor);
+  });
+
+  changeTargetPriceBtn.addEventListener("change", () => {
+    const targetPrice = Number(changeTargetPriceBtn.value.replace(/\D/g, ""));
+    if (targetPrice <= 0) {
+      changeTargetPriceBtn.value = data.bid.target_price.toLocaleString();
+    } else {
+      data.bid.target_price = targetPrice;
+    }
+    render();
+  });
+
+  const changeTargetMarginBtn = summaryEl.querySelector("#target-margin");
+  changeTargetMarginBtn.addEventListener("change", () => {
+    const targetMargin = Number(changeTargetMarginBtn.value) / 100;
+    if (targetMargin <= 0 || (Number(changeTargetMarginBtn.value) >= 100)) {
+      changeTargetMarginBtn.value = data.bid.target_margin
+    } else {
+      data.bid.target_margin = targetMargin
+    }
     render();
   });
 
