@@ -160,7 +160,7 @@ if (saved !== null) {
       render();
     })
     .catch((err) => {
-      summaryEl.innerHTML = `<p style="color:red">Couldn't load data: ${err.message}</p>`;
+      summaryEl.innerHTML = `<p style="color:var(--bad)">Couldn't load data: ${err.message}</p>`;
     });
 }
 
@@ -258,11 +258,11 @@ function render() {
     const podMargin = p.price === 0 ? null : (p.price - p.cost) / p.price;
     const podMarginDisplay = podMargin === null ? "—" : formatPercent(podMargin);
     if (podMargin === null) {
-      podColor = "grey";
+      podColor = "var(--muted)";
     } else if (podMargin >= bid.target_margin) {
-      podColor = "green";
+      podColor = "var(--good)";
     } else {
-      podColor = "red";
+      podColor = "var(--bad)";
     }
     podRows += `<tr>
     <td>${p.name}</td>
@@ -289,17 +289,17 @@ function render() {
   if (totalPrice === 0) {
     priceMarginDisplay = "—";
     priceVerdict = "No allocations to price yet";
-    priceColor = "grey";
+    priceColor = "var(--muted)";
   } else {
     const priceDiff = totalPrice - bid.target_price;
     const pricePercent = priceDiff / bid.target_price;
     priceMarginDisplay = formatMoney(Math.abs(priceDiff));
     if (priceDiff >= 0) {
       priceVerdict = "+" + formatPercent(Math.abs(pricePercent));
-      priceColor = "red";
+      priceColor = "var(--bad)";
     } else {
       priceVerdict = "-" + formatPercent(Math.abs(pricePercent));
-      priceColor = "green";
+      priceColor = "var(--good)";
     }
   }
 
@@ -312,16 +312,16 @@ function render() {
   if (totalPrice === 0) {
     marginDisplay = "—";
     verdict = "No allocations to price yet";
-    color = "grey";
+    color = "var(--muted)";
   } else {
     const targetPercentage = margin - bid.target_margin;
     marginDisplay = formatPercent(margin);
     if (margin >= bid.target_margin) {
       verdict = "Beats target by " + formatPercent(Math.abs(targetPercentage));
-      color = "green";
+      color = "var(--good)";
     } else {
       verdict = "Below target by " + formatPercent(Math.abs(targetPercentage));
-      color = "red";
+      color = "var(--bad)";
     }
   }
 
@@ -330,28 +330,28 @@ function render() {
   const scaleFactor = bid.target_price / totalPrice
 
   if (totalPrice === 0) {
-    scaleDisplay = "—"; scaleColor = "grey";
+    scaleDisplay = "—"; scaleColor = "var(--muted)";
   } else {
     if (scaleFactor > 1) {
       scaleDisplay = (scaleFactor * 100).toFixed(0) + "%";
-      scaleColor = "green";
+      scaleColor = "var(--good)";
     } else {
       scaleDisplay = (scaleFactor * 100).toFixed(0) + "%";
-      scaleColor = "red";
+      scaleColor = "var(--bad)";
     }
   }
 
   let floorDisplay = "";
   let floorColor;
   if (bid.target_margin === 1 || totalCost === 0) {
-    floorDisplay = "—"; floorColor = "grey";
+    floorDisplay = "—"; floorColor = "var(--muted)";
   } else {
     const floorPrice = totalCost / (1 - bid.target_margin);
     floorDisplay = "$" + floorPrice.toLocaleString(undefined, { notation: "compact" })
     if (totalPrice >= floorPrice) {
-      floorColor = "green";
+      floorColor = "var(--good)";
     } else {
-      floorColor = "red";
+      floorColor = "var(--bad)";
     }
   }
 
@@ -366,7 +366,7 @@ function render() {
       canShift = true;
     }
   }
-  const shiftColor = canShift ? "green" : "grey";
+  const shiftColor = canShift ? "var(--good)" : "var(--muted)";
 
   const flags = [];
 
@@ -475,7 +475,7 @@ function render() {
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
       </table>
-      <input id="draft-description" type="text" placeholder="Enter new pod description"><button id="draft-btn">Send</button>
+      <div class="draft-row"><input id="draft-description" type="text" placeholder="Describe work to draft allocations with AI…"><button id="draft-btn">Send</button></div>
       </div>
       <button id="explain-btn">Summarize bid</button>
       <button id="add-btn">+ Add allocation</button>
@@ -700,7 +700,7 @@ function render() {
   const resetBtn = summaryEl.querySelector("#reset-btn");
   resetBtn.addEventListener("click", () => {
     summaryEl.innerHTML = `
-    <p><span style="color:red"> Are you sure? You will lose all your progress.</p>
+    <p><span style="color:var(--bad)"> Are you sure? You will lose all your progress.</p>
       <button id="reset-btn">Reset</button>
       <button id="no-btn">No</button>
     `;
