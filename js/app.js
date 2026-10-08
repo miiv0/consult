@@ -273,6 +273,15 @@ function render() {
   </tr>`;
   }
 
+  let podEditRows = "";
+  for (const pod of data.pods) {
+    podEditRows += `<tr>
+    <td><input data-pod-id="${pod.id}" data-field="name" value="${pod.name}"></td>
+    <td><input data-pod-id="${pod.id}" data-field="cost_rate" type="number" value="${pod.cost_rate}"></td>
+    <td><input data-pod-id="${pod.id}" data-field="bill_rate" type="number" value="${pod.bill_rate}"></td>
+  </tr>`;
+  }
+
   let priceMarginDisplay;
   let priceVerdict;
   let priceColor;
@@ -482,6 +491,13 @@ function render() {
       <ul>${snapshotRows}</ul>
       </div>` : ""}
       <div class="panel">
+      <div class="panel-title">Pods</div>
+      <table>
+      <tr><th>Name</th><th>Cost Rate</th><th>Bill Rate</th></tr>
+      ${podEditRows}
+      </table>
+      </div>
+      <div class="panel">
       <div class="panel-title">Breakdown By Pod</div>
       <table>
       <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th>Margin</th></tr>
@@ -583,6 +599,23 @@ function render() {
   changeTitleBtn.addEventListener("change", () => {
     data.bid.name = changeTitleBtn.value;
     render();
+  });
+
+  summaryEl.querySelectorAll("input[data-pod-id]").forEach((el) => {
+    el.addEventListener("change", () => {
+      const pod = data.pods.find((p) => p.id === el.dataset.podId)
+      if (el.dataset.field === "name") {
+        pod.name = el.value.trim() || pod.name;
+      } else {
+        const value = Number(el.value);
+        if (Number.isNaN(value) || value < 0) {
+          el.value = pod[el.dataset.field];
+          return;
+        }
+        pod[el.dataset.field] = value;
+      }
+      render();
+    });
   });
 
   const changeTargetPriceBtn = summaryEl.querySelector("#target-price");
