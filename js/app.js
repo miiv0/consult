@@ -407,16 +407,20 @@ function render() {
   let summary = ""
 
   summaryEl.innerHTML = `
-      <input id="bid-name" value="${bid.name}" placeholder="Untitled Project">
+      <div class="title-bar">
+        <input id="bid-name" value="${bid.name}" placeholder="Untitled Project">
+        <div class="title-actions">
+          <button id="explain-btn">Summarize bid</button>
+          <button id="snap-btn">Save Snapshot</button>
+          <button id="reset-btn">Reset</button>
+        </div>
+      </div>
+      <div id=explain-panel></div>
+      ${flags.length > 0 ? `<div class="panel">
+      <div class="panel-title">Flags</div>
+      <ul>${flagRows}</ul>
+      </div>` : ""}
       <div class="stat-grid">
-        <div class="stat-tile">
-          <div class="stat-label">Target Price</div>
-          <input id="target-price" type="text" inputmode="numeric" value="${bid.target_price.toLocaleString()}">
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Target Margin</div>
-          <input id="target-margin" type="number" value="${bid.target_margin * 100}">
-        </div>
         <div class="stat-tile">
           <div class="stat-label">Total Price</div>
           <div class="stat-value">${formatMoney(totalPrice)}</div>
@@ -424,10 +428,6 @@ function render() {
         <div class="stat-tile">
           <div class="stat-label">Total Cost</div>
           <div class="stat-value">${formatMoney(totalCost)}</div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Total Hours</div>
-          <div class="stat-value">${totalHours.toLocaleString()}</div>
         </div>
         <div class="stat-tile">
           <div class="stat-label">Margin</div>
@@ -440,6 +440,14 @@ function render() {
         <div class="stat-tile">
           <div class="stat-label">Price vs. Target</div>
           <div class="stat-value"><span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Target Price</div>
+          <input id="target-price" type="text" inputmode="numeric" value="${bid.target_price.toLocaleString()}">
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Target Margin</div>
+          <input id="target-margin" type="number" value="${bid.target_margin * 100}">
         </div>
         <div class="stat-tile">
           <div class="stat-label">Floor Price</div>
@@ -457,41 +465,15 @@ function render() {
         </div>
       </div>
       <div class="panel">
-      <div class="panel-title">Risk (Monte Carlo)</div>
-      <button id="run-sim-button">Run Simulation</button>
-      <div class="range-track">
-        <div class="range-marker" style="left: ${p50Position}%; background: #60A5FA">
-          <span style="top: -1.45rem" class="range-marker-label">P50: ${formatMoney(p50)}</span>
-        </div>
-        <div class="range-marker" style="left: ${p80Position}%; background: #faaf60">
-          <span style="top: -2.45rem" class="range-marker-label">P80: ${formatMoney(p80)}</span>
-        </div>
-        <div class="range-marker" style="left: ${p90Position}%; background: #fa6060">
-          <span style="top: -1.45rem" class="range-marker-label">P90: ${formatMoney(p90)}</span>
-        </div>
-      </div>
-      </div>
-      <div class="panel">
-      <div class="panel-title">Breakdown Table</div>
+      <div class="panel-title">Allocations</div>
       <table>
       <tr><th>Capability</th><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th></th></tr>
       ${rows}
+      <tr class="total-row"><td>Total</td><td></td><td>${totalHours.toLocaleString()}</td><td>${formatMoney(totalCost)}</td><td>${formatMoney(totalPrice)}</td><td></td></tr>
       </table>
       <button id="add-alloc-btn">+ Add allocation</button>
       <div class="draft-row"><input id="draft-description" type="text" placeholder="Describe work to draft allocations with AI…"><button id="draft-btn">Send</button></div>
       </div>
-      <button id="explain-btn">Summarize bid</button>
-      <button id="snap-btn">Save Snapshot</button>
-      <button id="reset-btn">Reset</button>
-      <div id=explain-panel></div>
-      ${flags.length > 0 ? `<div class="panel">
-      <div class="panel-title">Flags</div>
-      <ul>${flagRows}</ul>
-      </div>` : ""}
-      ${snapshotRows.length > 0 ? `<div class="panel">
-      <div class="panel-title">Snapshots</div>
-      <ul>${snapshotRows}</ul>
-      </div>` : ""}
       <div class="panel">
       <div class="panel-title">Pods</div>
       <table>
@@ -508,12 +490,31 @@ function render() {
       </table>
       </div>
       <div class="panel">
+      <div class="panel-title">Risk (Monte Carlo)</div>
+      <button id="run-sim-button">Run Simulation</button>
+      <div class="range-track">
+        <div class="range-marker" style="left: ${p50Position}%; background: #60A5FA">
+          <span style="top: -1.45rem" class="range-marker-label">P50: ${formatMoney(p50)}</span>
+        </div>
+        <div class="range-marker" style="left: ${p80Position}%; background: #faaf60">
+          <span style="top: -2.45rem" class="range-marker-label">P80: ${formatMoney(p80)}</span>
+        </div>
+        <div class="range-marker" style="left: ${p90Position}%; background: #fa6060">
+          <span style="top: -1.45rem" class="range-marker-label">P90: ${formatMoney(p90)}</span>
+        </div>
+      </div>
+      </div>
+      <div class="panel">
       <div class="panel-title">Effort Estimate Comparison</div>
       <table>
       <tr><th>Capability</th><th>Bottom-Up Hours</th><th>Parametric Hours</th></tr>
       ${capRows}
       </table>
       </div>
+      ${snapshotRows.length > 0 ? `<div class="panel">
+      <div class="panel-title">Snapshots</div>
+      <ul>${snapshotRows}</ul>
+      </div>` : ""}
   `;
 
   summaryEl.querySelectorAll("#draft-btn").forEach((btn) => {

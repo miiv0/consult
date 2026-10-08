@@ -322,3 +322,31 @@ main {
 #bid-summary .draft-row button {
   margin-right: 0;
 }
+
+.title-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+#bid-summary .title-bar #bid-name {
+  flex: 1 1 320px;
+  width: auto;
+  min-width: 0;
+}
+
+.title-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+#bid-summary .title-actions button {
+  margin-right: 0;
+}
+
+#bid-summary .total-row td {
+  font-weight: 700;
+  border-top: 2px solid var(--graphite-soft);
+}
