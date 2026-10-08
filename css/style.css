@@ -198,9 +198,14 @@ main {
   color: var(--ivory);
   background: transparent;
   border: none;
-  border-bottom: 2px solid var(--graphite-soft);
+  border-bottom: 2px solid transparent;
   border-radius: 0;
   outline: none;
+}
+
+#bid-summary #target-price:hover,
+#bid-summary #target-margin:hover {
+  border-bottom-color: var(--graphite-soft);
 }
 
 #bid-summary #target-price:focus,
