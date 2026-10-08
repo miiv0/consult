@@ -284,6 +284,16 @@ function render() {
   </tr>`;
   }
 
+  let capEditRows = "";
+  for (const cap of data.capabilities) {
+    const inUse = data.allocations.some((a) => a.capability_id === cap.id);
+    capEditRows += `<tr>
+    <td><input data-cap-id="${cap.id}" data-field="name" value="${cap.name}"></td>
+    <td><input data-cap-id="${cap.id}" data-field="size_ksloc" type="number" value="${cap.size_ksloc}"></td>
+    <td><button data-del-cap="${cap.id}" ${inUse ? "disabled" : ""}>✕</button></td>
+  </tr>`;
+  }
+
   let priceMarginDisplay;
   let priceVerdict;
   let priceColor;
@@ -483,6 +493,14 @@ function render() {
       <button id="add-pod-btn">+ Add pod</button>
       </div>
       <div class="panel">
+      <div class="panel-title">Capabilities</div>
+      <table>
+      <tr><th>Name</th><th>Size (KSLOC)</th><th></th></tr>
+      ${capEditRows}
+      </table>
+      <button id="add-cap-btn">+ Add capability</button>
+      </div>
+      <div class="panel">
       <div class="panel-title">Breakdown By Pod</div>
       <table>
       <tr><th>Pod</th><th>Hours</th><th>Cost</th><th>Price</th><th>Margin</th></tr>
@@ -622,6 +640,23 @@ function render() {
     });
   });
 
+  summaryEl.querySelectorAll("input[data-cap-id]").forEach((el) => {
+    el.addEventListener("change", () => {
+      const cap = data.capabilities.find((c) => c.id === el.dataset.capId);
+      if (el.dataset.field === "name") {
+        cap.name = el.value.trim() || cap.name;
+      } else {
+        const value = Number(el.value);
+        if (Number.isNaN(value) || value < 0) {
+          el.value = cap[el.dataset.field];
+          return;
+        }
+        cap[el.dataset.field] = value;
+      }
+      render();
+    });
+  });
+
   const changeTargetPriceBtn = summaryEl.querySelector("#target-price");
   changeTargetPriceBtn.addEventListener("input", () => {
     const text = changeTargetPriceBtn.value;
@@ -699,6 +734,24 @@ function render() {
       bill_rate: 0
     });
     render();
+  });
+
+  const addCapBtn = summaryEl.querySelector("#add-cap-btn");
+  addCapBtn.addEventListener("click", () => {
+    data.capabilities.push({
+      id: "cap-" + Date.now(),
+      name: "New Capability",
+      size_ksloc: 0
+    });
+    render();
+  });
+
+  summaryEl.querySelectorAll("button[data-del-cap]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = data.capabilities.findIndex((c) => c.id === btn.dataset.delCap);
+      data.capabilities.splice(index, 1);
+      render();
+    });
   });
 
   summaryEl.querySelectorAll("button[data-del-pod]").forEach((btn) => {
