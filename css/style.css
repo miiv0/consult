@@ -350,3 +350,9 @@ main {
   font-weight: 700;
   border-top: 2px solid var(--graphite-soft);
 }
+
+.hint {
+  margin: 0.75rem 0;
+  font-size: 0.8rem;
+  color: var(--silver);
+}

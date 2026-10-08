@@ -432,6 +432,14 @@ function render() {
       </div>` : ""}
       <div class="stat-grid">
         <div class="stat-tile">
+          <div class="stat-label">Target Price</div>
+          <input id="target-price" type="text" inputmode="numeric" value="${bid.target_price.toLocaleString()}">
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Target Margin</div>
+          <input id="target-margin" type="number" value="${bid.target_margin * 100}">
+        </div>
+        <div class="stat-tile">
           <div class="stat-label">Total Price</div>
           <div class="stat-value">${formatMoney(totalPrice)}</div>
         </div>
@@ -450,14 +458,6 @@ function render() {
         <div class="stat-tile">
           <div class="stat-label">Price vs. Target</div>
           <div class="stat-value"><span style="color:${priceColor}">${priceMarginDisplay} (${priceVerdict})</span></div>
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Target Price</div>
-          <input id="target-price" type="text" inputmode="numeric" value="${bid.target_price.toLocaleString()}">
-        </div>
-        <div class="stat-tile">
-          <div class="stat-label">Target Margin</div>
-          <input id="target-margin" type="number" value="${bid.target_margin * 100}">
         </div>
         <div class="stat-tile">
           <div class="stat-label">Floor Price</div>
@@ -498,6 +498,7 @@ function render() {
       <tr><th>Name</th><th>Size (KSLOC)</th><th></th></tr>
       ${capEditRows}
       </table>
+      <p class="hint">Size is the estimated thousands of lines of code (KSLOC) — e.g. 4 ≈ 4,000 lines. It only drives the parametric hours in Effort Estimate Comparison; it doesn't change price.</p>
       <button id="add-cap-btn">+ Add capability</button>
       </div>
       <div class="panel">
