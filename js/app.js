@@ -417,6 +417,8 @@ function render() {
     flagRows += `<li>${flag.message}</li>`;
   }
 
+  const noCaps = data.capabilities.length === 0;
+
   const p50 = getPercentile(lastSimResults, 0.5);
   const p80 = getPercentile(lastSimResults, 0.8);
   const p90 = getPercentile(lastSimResults, 0.9);
@@ -506,7 +508,8 @@ function render() {
       ${rows}
       <tr class="total-row"><td>Total</td><td></td><td>${totalHours.toLocaleString()}</td><td>${formatMoney(totalCost)}</td><td>${formatMoney(totalPrice)}</td><td></td></tr>
       </table>
-      <button id="add-alloc-btn">+ Add allocation</button>
+      <button id="add-alloc-btn" ${noCaps ? "disabled" : ""}>+ Add allocation</button>
+      ${noCaps ? `<p class="hint">Add a capability first.</p>` : ""}
       <div class="draft-row"><input id="draft-description" type="text" placeholder="Describe work to draft allocations with AI…"><button id="draft-btn">Send</button></div>
       </div>
       <div class="panel">

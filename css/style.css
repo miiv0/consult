@@ -183,6 +183,11 @@ main {
   background: transparent;
 }
 
+#bid-summary button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .stat-grid {
   display: flex;
   flex-wrap: wrap;
