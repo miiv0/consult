@@ -477,7 +477,10 @@ function render() {
         <textarea id="draft-bid-description" rows="3" placeholder="Describe the project, e.g. a credit union wants a mobile banking app with login, bill pay, and migration of 10 years of transaction history."></textarea>
         <div class="ai-actions">
           <span class="hint">Replaces the current bid. Your target price and margin are kept.</span>
-          <button id="draft-bid-btn" class="primary-btn">Draft Bid</button>
+          <div class="draft-btn-group">
+            <div id="hint-btn-placeholder"></div>
+            <button id="draft-bid-btn" class="primary-btn">Draft Bid</button>
+          </div>
         </div>
       </div>
       <div id=explain-panel></div>
@@ -633,28 +636,48 @@ function render() {
 
   summaryEl.querySelectorAll("#draft-bid-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
+      const hint = document.getElementById("hint-btn-placeholder");
+      const box = document.getElementById("draft-bid-description");
       const description = document.getElementById("draft-bid-description").value
-      const response = await fetch("http://localhost:3002/draft-bid", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description })
-      });
-      const text = await response.text();
-      const parsed = JSON.parse(text)
-      const draftFromAI = validateDraft(parsed)
-      const fresh = createEmptyBid();
-      fresh.bid.target_price = data.bid.target_price;
-      fresh.bid.target_margin = data.bid.target_margin;
-      fresh.bid.name = draftFromAI.name;
-      fresh.pods = [...fresh.pods, ...draftFromAI.pods];
-      fresh.capabilities = draftFromAI.capabilities;
-      fresh.allocations = draftFromAI.allocations.map((a, i) => ({
-        id: "a" + Date.now() + "-" + i,
-        ...a
-      }));
-      data = fresh;
-      lastSimResults = runSimulation(1000);
-      render();
+      btn.textContent = "Drafting…";
+      btn.disabled = true;
+      box.disabled = true;
+      try {
+        const response = await fetch("http://localhost:3002/draft-bid", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ description })
+        });
+        const text = await response.text();
+        const parsed = JSON.parse(text)
+        const draftFromAI = validateDraft(parsed)
+        const fresh = createEmptyBid();
+        fresh.bid.target_price = data.bid.target_price;
+        fresh.bid.target_margin = data.bid.target_margin;
+        fresh.bid.name = draftFromAI.name;
+        fresh.pods = [...fresh.pods, ...draftFromAI.pods];
+        fresh.capabilities = draftFromAI.capabilities;
+        fresh.allocations = draftFromAI.allocations.map((a, i) => ({
+          id: "a" + Date.now() + "-" + i,
+          ...a
+        }));
+        data = fresh;
+        lastSimResults = runSimulation(1000);
+        render();
+      } catch (error) {
+        console.error(error);
+        btn.textContent = "Draft Bid";
+        btn.disabled = false;
+        box.disabled = false;
+        hint.innerHTML = `
+          <div class="error-tip">
+            <button class="error-btn" type="button">!</button>
+            <div class="error-tip-text">
+              Couldn't draft a bid. Is the server running?
+              <small>${error.message}</small>
+            </div>
+          </div>`;
+      }
     });
   });
 
