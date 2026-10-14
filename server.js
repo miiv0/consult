@@ -1,14 +1,62 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const MODEL = "qwen3:8b";
 app.use(cors());
 app.use(express.json());
+
+const bidSchema = {
+    type: "object",
+    properties: {
+        name: { type: "string" },
+        target_price: { type: "number" },
+        target_margin: { type: "number" },
+        pods: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    cost_rate: { type: "number" },
+                    bill_rate: { type: "number" }
+                },
+                required: ["id", "name", "cost_rate", "bill_rate"]
+            }
+        },
+        capabilities: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    size_ksloc: { type: "number" }
+                },
+                required: ["id", "name", "size_ksloc"]
+            }
+        },
+        allocations: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    capability_id: { type: "string" },
+                    pod_id: { type: "string" },
+                    hours: { type: "number" }
+                },
+                required: ["capability_id", "pod_id", "hours"]
+            }
+        }
+    },
+    required: ["name", "target_price", "target_margin", "pods", "capabilities", "allocations"]
+};
 
 app.get("/hello", (req, res) => {
     res.send("Hi!")
 });
 
-app.listen(3001, () => {
+app.listen(3002, () => {
     console.log("Server is running!")
 });
 
@@ -19,7 +67,7 @@ app.post("/ask", async (req, res) => {
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ model: "llama3.2:latest", prompt: req.body.prompt, stream: false, })
+                body: JSON.stringify({ model: MODEL, prompt: req.body.prompt, stream: false, })
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -47,7 +95,7 @@ app.post("/draft-allocations", async (req, res) => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    model: "llama3.2:latest", prompt: `
+                    model: MODEL, prompt: `
                     You are helping plan work for a consulting bid. You must only use the
                     capabilities and pods listed below, do not invent new ones.
 
@@ -92,7 +140,7 @@ app.post("/explain", async (req, res) => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    model: "llama3.2:latest", prompt: `
+                    model: MODEL, prompt: `
                     You are helping to summarize the bid for a company.
                     Structure the response like a paragraph detailing a couple of factors, 
                     making it sound professional but consise and to the point.
@@ -103,6 +151,59 @@ app.post("/explain", async (req, res) => {
                     , stream: false
                 })
             });
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            res.send(data.response)
+            console.log(data);
+            return data;
+        } catch (error) {
+            console.error('Fetch failed:', error.message);
+        }
+    }
+    fetchData();
+})
+
+app.post("/draft-bid", async (req, res) => {
+    const description = req.body.description
+    async function fetchData() {
+        const url = "http://localhost:11434/api/generate";
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: MODEL, prompt: `
+                    You are an experienced consulting bid manager. Draft a complete
+                    pricing bid for the project described at the end.
+
+                    Rules:
+                    1. "name": a short bid title in the form "Client: Project Name".
+                    2. "target_price": total price in US dollars, a plain number.
+                    3. "target_margin": a decimal between 0.20 and 0.50 (0.35 means 35%).
+                    4. "pods": 2 to 4 delivery teams. Ids are "pod-1", "pod-2", and so on.
+                       Rates are US dollars per hour. cost_rate must always be LOWER
+                       than bill_rate. Typical ranges: onshore cost 120-200 / bill 250-450;
+                       nearshore cost 60-100 / bill 150-250; offshore cost 25-45 / bill 70-120.
+                    5. Do NOT include a governance, PMO, or project-management pod.
+                    6. "capabilities": 3 to 6 pieces of work the project needs. Ids are
+                       "cap-1", "cap-2", and so on. "size_ksloc" is estimated thousands
+                       of lines of code, between 1 and 50.
+                    7. "allocations": each assigns hours on one capability to one pod.
+                       Every capability must appear in at least one allocation. Every
+                       pod_id and capability_id must exactly match an id defined above.
+                       "hours" is a whole number between 40 and 3000.
+                    8. The total of hours times bill_rate across all allocations should
+                       be roughly close to target_price.
+
+                    Project description:
+                    ${description}
+                    `
+                    , stream: false, think: false, format: bidSchema
+                })
+            });
+
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

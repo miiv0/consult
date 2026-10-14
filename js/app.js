@@ -567,7 +567,7 @@ function render() {
   summaryEl.querySelectorAll("#draft-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const description = document.getElementById("draft-description").value
-      const response = await fetch("http://localhost:3001/draft-allocations", {
+      const response = await fetch("http://localhost:3002/draft-allocations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ description, pods: data.pods, capabilities: data.capabilities })
@@ -589,7 +589,7 @@ function render() {
 
   summaryEl.querySelectorAll("#explain-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      const response = await fetch("http://localhost:3001/explain", {
+      const response = await fetch("http://localhost:3002/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bidData: { bid, totalPrice: formatMoney(totalPrice), totalCost: formatMoney(totalCost), margin: formatPercent(margin), verdict, flags, podTotals } })
