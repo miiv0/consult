@@ -465,6 +465,7 @@ function render() {
   summaryEl.innerHTML = `
       <div class="title-bar">
         <input id="bid-name" value="${bid.name}" placeholder="Untitled Project">
+        <div class="draft-row"><input id="draft-bid-description" type="text" placeholder="Describe a project to draft a whole bid with AI…"><button id="draft-bid-btn">Draft Bid</button></div>
         <div class="title-actions">
           <button id="explain-btn">Summarize bid</button>
           <button id="snap-btn">Save Snapshot</button>
@@ -530,7 +531,7 @@ function render() {
       </table>
       <button id="add-alloc-btn" ${noCaps ? "disabled" : ""}>+ Add allocation</button>
       ${noCaps ? `<p class="hint">Add a capability first.</p>` : ""}
-      <div class="draft-row"><input id="draft-description" type="text" placeholder="Describe work to draft allocations with AI…"><button id="draft-btn">Send</button></div>
+      <div class="draft-row"><input id="draft-description" type="text" placeholder="Describe work to draft allocations with AI…"><button id="draft-alloc-btn">Send</button></div>
       </div>
       <div class="panel">
       <div class="panel-title">Pods</div>
@@ -584,7 +585,7 @@ function render() {
       </div>` : ""}
   `;
 
-  summaryEl.querySelectorAll("#draft-btn").forEach((btn) => {
+  summaryEl.querySelectorAll("#draft-alloc-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const description = document.getElementById("draft-description").value
       const response = await fetch("http://localhost:3002/draft-allocations", {
@@ -620,6 +621,33 @@ function render() {
       <div class="panel-title">Summary</div>
       <div>${text}</div>
       </div>`;
+    });
+  });
+
+  summaryEl.querySelectorAll("#draft-bid-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const description = document.getElementById("draft-description").value
+      const response = await fetch("http://localhost:3002/draft-bid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description })
+      });
+      const text = await response.text();
+      const parsed = JSON.parse(text)
+      const draftFromAI = validateDraft(parsed)
+      const fresh = createEmptyBid();
+      fresh.bid.target_price = data.bid.target_price;
+      fresh.bid.target_margin = data.bid.target_margin;
+      fresh.bid.name = draftFromAI.name;
+      fresh.pods = [...fresh.pods, ...draftFromAI.pods];
+      fresh.capabilities = draftFromAI.capabilities;
+      fresh.allocations = draftFromAI.allocations.map((a, i) => ({
+        id: "a" + Date.now() + "-" + i,
+        ...a
+      }));
+      data = fresh;
+      lastSimResults = runSimulation(1000);
+      render();
     });
   });
 
