@@ -75,6 +75,26 @@ function createEmptyBid() {
   };
 }
 
+function validateDraft(draft) {
+  const goodPods = draft.pods.filter((p) =>
+    p.cost_rate > 0 && p.bill_rate > p.cost_rate
+  );
+  const goodCaps = draft.capabilities.filter((c) =>
+    c.size_ksloc > 0
+  );
+  const goodAllocs = draft.allocations.filter((a) =>
+    a.hours > 0 &&
+    goodPods.some((p) => p.id === a.pod_id) &&
+    goodCaps.some((c) => c.id === a.capability_id)
+  );
+  return {
+    name: draft.name,
+    pods: goodPods,
+    capabilities: goodCaps,
+    allocations: goodAllocs
+  };
+}
+
 function getBestMarginPod() {
   let best = null;
   let bestMargin = null;
