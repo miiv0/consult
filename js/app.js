@@ -465,12 +465,19 @@ function render() {
   summaryEl.innerHTML = `
       <div class="title-bar">
         <input id="bid-name" value="${bid.name}" placeholder="Untitled Project">
-        <div class="draft-row"><input id="draft-bid-description" type="text" placeholder="Describe a project to draft a whole bid with AI…"><button id="draft-bid-btn">Draft Bid</button></div>
         <div class="title-actions">
           <button id="explain-btn">Summarize bid</button>
           <button id="snap-btn">Save Snapshot</button>
           <button id="new-bid-btn">New Bid</button>
           <button id="reset-btn">Reset</button>
+        </div>
+      </div>
+      <div class="panel ai-panel">
+        <div class="panel-title">Draft a bid with AI</div>
+        <textarea id="draft-bid-description" rows="3" placeholder="Describe the project, e.g. a credit union wants a mobile banking app with login, bill pay, and migration of 10 years of transaction history."></textarea>
+        <div class="ai-actions">
+          <span class="hint">Replaces the current bid. Your target price and margin are kept.</span>
+          <button id="draft-bid-btn" class="primary-btn">Draft Bid</button>
         </div>
       </div>
       <div id=explain-panel></div>
@@ -626,7 +633,7 @@ function render() {
 
   summaryEl.querySelectorAll("#draft-bid-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      const description = document.getElementById("draft-description").value
+      const description = document.getElementById("draft-bid-description").value
       const response = await fetch("http://localhost:3002/draft-bid", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -328,6 +328,49 @@ main {
   margin-right: 0;
 }
 
+#bid-summary textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  color: var(--ivory);
+  background: var(--base-soft);
+  border: 1px solid var(--graphite-soft);
+  border-radius: 8px;
+  resize: vertical;
+}
+
+#bid-summary textarea:focus {
+  outline: none;
+  border-color: var(--silver);
+}
+
+.ai-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-top: 0.75rem;
+}
+
+.ai-actions .hint {
+  margin: 0;
+}
+
+#bid-summary .primary-btn {
+  margin-right: 0;
+  color: var(--head-fg);
+  background: var(--head-bg);
+  border-color: var(--head-bg);
+}
+
+#bid-summary .primary-btn:hover {
+  background: var(--head-bg);
+  opacity: 0.85;
+}
+
 .title-bar {
   display: flex;
   flex-wrap: wrap;
