@@ -159,6 +159,11 @@ main {
   border: 1px solid var(--graphite-soft);
   border-radius: 999px;
   cursor: pointer;
+  transition: transform 0.08s;
+}
+
+#bid-summary button:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 #bid-summary button:hover {
@@ -301,10 +306,15 @@ main {
   border: 1px solid var(--graphite-soft);
   border-radius: 999px;
   cursor: pointer;
+  transition: transform 0.08s;
 }
 
 #theme-btn:hover {
   background: var(--graphite);
+}
+
+#theme-btn:active {
+  transform: scale(0.95);
 }
 
 .draft-row {
