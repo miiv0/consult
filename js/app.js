@@ -889,6 +889,11 @@ function render() {
       "id": "s" + Date.now()
     });
     render();
+    const savedBtn = summaryEl.querySelector("#snap-btn");
+    savedBtn.textContent = "Saved ✓";
+    setTimeout(() => {
+      savedBtn.textContent = "Save Snapshot";
+    }, 1500);
   });
 
   summaryEl.querySelectorAll("button[data-snap-id]").forEach((btn) => {
