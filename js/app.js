@@ -620,12 +620,16 @@ function render() {
 
   summaryEl.querySelectorAll("#explain-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
+      btn.textContent = "Summarizing...";
+      btn.disabled = true;
       const response = await fetch("http://localhost:3002/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bidData: { bid, totalPrice: formatMoney(totalPrice), totalCost: formatMoney(totalCost), margin: formatPercent(margin), verdict, flags, podTotals } })
       });
       const text = await response.text();
+      btn.textContent = "Summarize bid";
+      btn.disabled = false;
       document.getElementById("explain-panel").innerHTML = `
       <div class="panel">
       <div class="panel-title">Summary</div>
