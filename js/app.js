@@ -457,7 +457,7 @@ function render() {
 
   let snapshotRows = "";
   for (const snap of data.snapshots) {
-    snapshotRows += `<li><button data-snap-id="${snap.id}">Load</button>${snap.label} — ${new Date(snap.taken_at).toLocaleString()}</li>`;
+    snapshotRows += `<li><button data-snap-id="${snap.id}">Load</button><input data-snap-label="${snap.id}" value="${snap.label}"><span class="snap-date">${new Date(snap.taken_at).toLocaleString()}</span></li>`;
   }
 
   let summary = ""
@@ -879,7 +879,7 @@ function render() {
   const snapBtn = summaryEl.querySelector("#snap-btn");
   snapBtn.addEventListener("click", () => {
     data.snapshots.push({
-      "label": "Snapshot saved",
+      "label": "Snapshot " + (data.snapshots.length + 1),
       "taken_at": (new Date().toISOString()),
       "bid": JSON.parse(JSON.stringify(data.bid)),
       "allocations": JSON.parse(JSON.stringify(data.allocations)),
@@ -900,6 +900,14 @@ function render() {
       data.capabilities = JSON.parse(JSON.stringify(snap.capabilities));
       data.resources = JSON.parse(JSON.stringify(snap.resources));
       lastSimResults = runSimulation(1000);
+      render();
+    });
+  });
+
+  summaryEl.querySelectorAll("input[data-snap-label]").forEach((el) => {
+    el.addEventListener("change", () => {
+      const snap = data.snapshots.find((s) => s.id === el.dataset.snapLabel);
+      snap.label = el.value;
       render();
     });
   });

@@ -475,3 +475,29 @@ main {
 .snapshot-list li:last-child {
   border-bottom: none;
 }
+
+#bid-summary .snapshot-list input {
+  flex: 1;
+  padding: 0.2rem 0;
+  font-weight: 600;
+  color: var(--ivory);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  outline: none;
+}
+
+#bid-summary .snapshot-list input:hover {
+  border-bottom-color: var(--graphite-soft);
+}
+
+#bid-summary .snapshot-list input:focus {
+  border-bottom-color: var(--silver);
+}
+
+.snap-date {
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
