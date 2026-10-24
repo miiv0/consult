@@ -457,7 +457,7 @@ function render() {
 
   let snapshotRows = "";
   for (const snap of data.snapshots) {
-    snapshotRows += `<li><button data-snap-id="${snap.id}">Load</button>${snap.label} — ${snap.taken_at}</li>`;
+    snapshotRows += `<li><button data-snap-id="${snap.id}">Load</button>${snap.label} — ${new Date(snap.taken_at).toLocaleString()}</li>`;
   }
 
   let summary = ""
@@ -899,6 +899,7 @@ function render() {
       data.pods = JSON.parse(JSON.stringify(snap.pods));
       data.capabilities = JSON.parse(JSON.stringify(snap.capabilities));
       data.resources = JSON.parse(JSON.stringify(snap.resources));
+      lastSimResults = runSimulation(1000);
       render();
     });
   });
