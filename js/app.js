@@ -457,7 +457,7 @@ function render() {
 
   let snapshotRows = "";
   for (const snap of data.snapshots) {
-    snapshotRows += `<li>${snap.label} — ${snap.taken_at}</li>`;
+    snapshotRows += `<li><button data-snap-id="${snap.id}">Load</button>${snap.label} — ${snap.taken_at}</li>`;
   }
 
   let summary = ""
@@ -591,7 +591,7 @@ function render() {
       </div>
       ${snapshotRows.length > 0 ? `<div class="panel">
       <div class="panel-title">Snapshots</div>
-      <ul>${snapshotRows}</ul>
+      <ul class="snapshot-list">${snapshotRows}</ul>
       </div>` : ""}
   `;
 
@@ -882,9 +882,25 @@ function render() {
       "label": "Snapshot saved",
       "taken_at": (new Date().toISOString()),
       "bid": JSON.parse(JSON.stringify(data.bid)),
-      "allocations": JSON.parse(JSON.stringify(data.allocations))
+      "allocations": JSON.parse(JSON.stringify(data.allocations)),
+      "pods": JSON.parse(JSON.stringify(data.pods)),
+      "capabilities": JSON.parse(JSON.stringify(data.capabilities)),
+      "resources": JSON.parse(JSON.stringify(data.resources)),
+      "id": "s" + Date.now()
     });
     render();
+  });
+
+  summaryEl.querySelectorAll("button[data-snap-id]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const snap = data.snapshots.find((s) => s.id === btn.dataset.snapId);
+      data.bid = JSON.parse(JSON.stringify(snap.bid));
+      data.allocations = JSON.parse(JSON.stringify(snap.allocations));
+      data.pods = JSON.parse(JSON.stringify(snap.pods));
+      data.capabilities = JSON.parse(JSON.stringify(snap.capabilities));
+      data.resources = JSON.parse(JSON.stringify(snap.resources));
+      render();
+    });
   });
 
   const newBidBtn = summaryEl.querySelector("#new-bid-btn");
