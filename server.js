@@ -1,9 +1,24 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const { Pool } = require("pg");
+const pool = new Pool({ database: "consult" });
 const MODEL = "qwen3:8b";
 app.use(cors());
 app.use(express.json());
+
+app.get("/bids", async (req, res) => {
+    const result = await pool.query("SELECT * FROM bids");
+    res.json(result.rows);
+});
+
+app.get("/bids/:id", async (req, res) => {
+    const result = await pool.query("SELECT * FROM bids WHERE id = $1", [req.params.id]);
+    if (result.rows.length === 0) {
+        return res.status(404).json({ error: "Bid not found" });
+    }
+    res.json(result.rows[0]);
+});
 
 const bidSchema = {
     type: "object",
